@@ -1,0 +1,14 @@
+ext {
+    group = 'com.yhyzgn.jakit'
+    version = '1.0-SNAPSHOT'
+    url = 'https://github.com/yhyzgn/jakit'
+    repository = [
+            release : 'https://oss.sonatype.org/service/local/staging/deploy/maven2',
+            snapshot: 'https://oss.sonatype.org/content/repositories/snapshots'
+    ] as LinkedHashMap
+    core = [
+            artifact   : 'core',
+            version    : '1.0-SNAPSHOT',
+            description: 'Some core components.'
+    ] as LinkedHashMap
+}
