@@ -12,11 +12,13 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * author : 颜洪毅
- * e-mail : yhyzgn@gmail.com
- * time   : 2020-05-02 9:18 下午
- * version: 1.0.0
- * desc   : 解决 java 9.0+ 通过 PropertyDescriptor 获取 getter 和 setter 方法报错的问题
+ * 解决 java 9.0+ 通过 PropertyDescriptor 获取 getter 和 setter 方法报错的问题
+ * <p>
+ * Created on 2020-05-02 21:18
+ *
+ * @author 颜洪毅
+ * @version 1.0.0
+ * @since 1.0.0
  * <p>
  * 参考资料：
  * https://dzone.com/articles/setters-method-handles-and-java-11
