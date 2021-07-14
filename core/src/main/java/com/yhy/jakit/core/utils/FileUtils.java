@@ -16,7 +16,7 @@ import java.util.Locale;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class FileUtils {
+public abstract class FileUtils {
     /**
      * 16进制数组常量
      */

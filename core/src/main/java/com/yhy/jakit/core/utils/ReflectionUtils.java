@@ -14,7 +14,7 @@ import java.util.Map;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class ReflectionUtils {
+public abstract class ReflectionUtils {
 
     private final static Map<Class<?>, Field[]> FIELD_CACHE = new HashMap<>();
 

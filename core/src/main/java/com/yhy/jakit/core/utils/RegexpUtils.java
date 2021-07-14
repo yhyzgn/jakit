@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class RegexpUtils {
+public abstract class RegexpUtils {
     // 数字
     private final static String REG_NUMBER = "^\\d+$";
     // 手机号码
