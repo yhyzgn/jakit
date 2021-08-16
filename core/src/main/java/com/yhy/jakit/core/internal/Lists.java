@@ -147,7 +147,8 @@ public abstract class Lists {
      * @param u       全集
      * @param list    任意集合
      * @param matcher 匹配器
-     * @param <T>     元素类型
+     * @param <S>     全集元素类型
+     * @param <T>     集合元素类型
      * @return 补集
      */
     public static <S, T> List<S> difference(List<S> u, List<T> list, Matcher<S, T> matcher) {
@@ -164,7 +165,8 @@ public abstract class Lists {
      * @param u         全集
      * @param list      任意集合
      * @param predicate 匹配表达式
-     * @param <T>       元素类型
+     * @param <S>       全集元素类型
+     * @param <T>       集合元素类型
      * @return 补集
      */
     public static <S, T> List<S> difference(List<S> u, List<T> list, Predicate<S> predicate) {
