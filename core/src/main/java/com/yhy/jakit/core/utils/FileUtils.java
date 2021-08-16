@@ -426,7 +426,7 @@ public abstract class FileUtils {
         if (null == root) {
             root = File.separator;
         }
-        File dir = new File(formatPath(root + dirs(parents) + File.separator + dirName));
+        File dir = new File(pathResolve(root + dirs(parents) + File.separator + dirName));
         return exists(dir, true) ? dir : null;
     }
 
@@ -455,7 +455,7 @@ public abstract class FileUtils {
         if (null == root) {
             root = File.separator;
         }
-        File dir = new File(formatPath(root + dirs(parents) + dailyPath()));
+        File dir = new File(pathResolve(root + dirs(parents) + dailyPath()));
         return exists(dir, true) ? dir : null;
     }
 
@@ -471,13 +471,13 @@ public abstract class FileUtils {
     }
 
     /**
-     * 格式化文件路径
+     * 文件路径标准化处理
      *
-     * @param path 文件路径
-     * @return 格式化后的路径
+     * @param path 文件路径ø
+     * @return 处理后的路径
      */
-    private static String formatPath(String path) {
-        return path.replaceAll("\\\\{2,}", "/").replaceAll("/{2,}", "/");
+    public static String pathResolve(String path) {
+        return path.replaceAll("\\{1,}", File.separator).replaceAll("/{2,}", File.separator);
     }
 
     /**
