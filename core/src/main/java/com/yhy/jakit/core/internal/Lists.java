@@ -3,9 +3,12 @@ package com.yhy.jakit.core.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
- * List 快速构建工具
+ * List 工具
  * <p>
  * Created on 2021-07-13 10:36
  *
@@ -31,5 +34,285 @@ public abstract class Lists {
             list.addAll(Arrays.asList(t));
         }
         return list;
+    }
+
+    /**
+     * 求两个集合的交集
+     * <p>
+     * 使用 {@link List#contains(Object)} 方式判断
+     *
+     * @param list1 集合1
+     * @param list2 集合2
+     * @param <T>   元素类型
+     * @return 交集
+     */
+    public static <T> List<T> intersection(List<T> list1, List<T> list2) {
+        return intersection(list1, list2, list2::contains);
+    }
+
+    /**
+     * 求两个集合的交集
+     * <p>
+     * 自定义匹配器 {@link Matcher#matched(Object, Object)}
+     *
+     * @param list1   集合1
+     * @param list2   集合2
+     * @param matcher 匹配器
+     * @param <T>     元素类型
+     * @return 交集
+     */
+    public static <T> List<T> intersection(List<T> list1, List<T> list2, Matcher<T, T> matcher) {
+        return intersection(list1, list2, item1 -> list2.stream().anyMatch(item2 -> matcher.matched(item1, item2)));
+    }
+
+    /**
+     * 求两个集合的交集
+     * <p>
+     * 匹配表达式 {@link Predicate#test(Object)}
+     *
+     * @param list1     集合1
+     * @param list2     集合2
+     * @param predicate 匹配表达式
+     * @param <T>       元素类型
+     * @return 交集
+     */
+    public static <T> List<T> intersection(List<T> list1, List<T> list2, Predicate<T> predicate) {
+        if (isEmpty(list1)) {
+            return isEmpty(list2) ? null : new ArrayList<>(list2);
+        }
+        if (isEmpty(list2)) {
+            return isEmpty(list1) ? null : new ArrayList<>(list1);
+        }
+        return list1.stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    /**
+     * 多个集合的并集，元素可重复
+     *
+     * @param lists 多个集合参数
+     * @param <T>   元素类型
+     * @return 并集
+     */
+    @SafeVarargs
+    public static <T> List<T> union(List<T>... lists) {
+        if (null == lists || lists.length == 0) {
+            return null;
+        }
+        List<T> result = new ArrayList<>();
+        for (List<T> list : lists) {
+            if (isNotEmpty(list)) {
+                result.addAll(list);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 多个集合的并集，元素不重复
+     *
+     * @param lists 多个集合参数
+     * @param <T>   元素类型
+     * @return 并集
+     */
+    @SafeVarargs
+    public static <T> List<T> unionDistinct(List<T>... lists) {
+        List<T> result = union(lists);
+        return null == result ? null : result.stream().distinct().collect(Collectors.toList());
+    }
+
+    /**
+     * list 关于 u 的相对补集，差集
+     * <p>
+     * 两个集合类型相同
+     * <p>
+     * 使用 {@link List#contains(Object)} 方式判断
+     *
+     * @param u    全集
+     * @param list 任意集合
+     * @param <T>  元素类型
+     * @return 补集
+     */
+    public static <T> List<T> difference(List<T> u, List<T> list) {
+        // 返回 u 中存在 但 list 中不存在的元素集合
+        return difference(u, list, itemU -> !list.contains(itemU));
+    }
+
+    /**
+     * list 关于 u 的相对补集，差集
+     * <p>
+     * 两个集合类型可以不同，返回值类型与全集类型相同
+     * <p>
+     * 自定义匹配器 {@link Matcher#matched(Object, Object)}
+     *
+     * @param u       全集
+     * @param list    任意集合
+     * @param matcher 匹配器
+     * @param <T>     元素类型
+     * @return 补集
+     */
+    public static <S, T> List<S> difference(List<S> u, List<T> list, Matcher<S, T> matcher) {
+        return difference(u, list, itemU -> list.stream().noneMatch(item -> matcher.matched(itemU, item)));
+    }
+
+    /**
+     * list 关于 u 的相对补集，差集
+     * <p>
+     * 两个集合类型可以不同，返回值类型与全集类型相同
+     * <p>
+     * 匹配表达式 {@link Predicate#test(Object)}
+     *
+     * @param u         全集
+     * @param list      任意集合
+     * @param predicate 匹配表达式
+     * @param <T>       元素类型
+     * @return 补集
+     */
+    public static <S, T> List<S> difference(List<S> u, List<T> list, Predicate<S> predicate) {
+        if (isEmpty(u)) {
+            return null;
+        }
+        if (isEmpty(list)) {
+            return isEmpty(u) ? null : new ArrayList<>(u);
+        }
+        // 返回 u 中存在 但 list 中不存在的元素集合
+        return u.stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    /**
+     * 判断集合为空
+     *
+     * @param list 集合
+     * @param <T>  元素类型
+     * @return 是否为空
+     */
+    public static <T> boolean isEmpty(List<T> list) {
+        return null == list || list.isEmpty();
+    }
+
+    /**
+     * 判断集合不为空
+     *
+     * @param list 集合
+     * @param <T>  元素类型
+     * @return 是否不为空
+     */
+    public static <T> boolean isNotEmpty(List<T> list) {
+        return !isEmpty(list);
+    }
+
+    /**
+     * List 集合中是否包含某个元素
+     * <p>
+     * 使用 {@link Objects#equals(Object, Object)} 方式判断
+     *
+     * @param src     集合
+     * @param element 元素
+     * @param <T>     元素类型
+     * @return 是否包含
+     */
+    public static <T> boolean contains(List<T> src, T element) {
+        return contains(src, element, Objects::equals);
+    }
+
+    /**
+     * List 集合中是否包含某个元素
+     * <p>
+     * 自定义匹配器 {@link Matcher#matched(Object, Object)}
+     *
+     * @param src     集合
+     * @param element 元素
+     * @param matcher 匹配器
+     * @param <T>     元素类型
+     * @return 是否包含
+     */
+    public static <T> boolean contains(List<T> src, T element, Matcher<T, T> matcher) {
+        return isEmpty(src) || null == element || src.stream().anyMatch(item -> matcher.matched(item, element));
+    }
+
+    /**
+     * 相同或不同的两个元素匹配器
+     *
+     * @param <S> 元素1类型
+     * @param <T> 元素2类型
+     */
+    @FunctionalInterface
+    public interface Matcher<S, T> {
+
+        /**
+         * 是否匹配
+         *
+         * @param s 元素1
+         * @param t 元素2
+         * @return 是否匹配
+         */
+        boolean matched(S s, T t);
+    }
+
+    public static void main(String[] args) {
+        System.out.println("\n=========================================== 基本类型 ===========================================\n");
+
+        List<String> list1 = Lists.of("A", "B", "C", "D", null);
+        List<String> list2 = Lists.of("C", "D", "E", "F", "G", null);
+
+        System.out.println("包含：" + contains(list1, "A"));
+        System.out.println("不包含：" + contains(list1, "E"));
+        System.out.println("交集：" + intersection(list1, list2));
+        System.out.println("并集：" + union(list1, list2));
+        System.out.println("差集（1中有2中无）：" + difference(list1, list2));
+        System.out.println("差集（2中有1中无）：" + difference(list2, list1));
+
+        System.out.println("\n=========================================== 复杂类型 ===========================================\n");
+        System.out.println("\033[1;31m---- 错误示例：\033[m\n");
+
+        List<TestEntry> listA = Lists.of(
+                TestEntry.create(1, "第一"),
+                TestEntry.create(2, "第二"),
+                TestEntry.create(3, "第三"),
+                TestEntry.create(4, "第四")
+        );
+
+        List<TestEntry> listB = Lists.of(
+                TestEntry.create(3, "第三"),
+                TestEntry.create(4, "第四"),
+                TestEntry.create(5, "第五"),
+                TestEntry.create(6, "第六"),
+                TestEntry.create(7, "第七")
+        );
+
+        System.out.println("包含：" + contains(listA, TestEntry.create(1, "第一")));
+        System.out.println("不包含：" + contains(listA, TestEntry.create(5, "第五")));
+        System.out.println("交集：" + intersection(listA, listB));
+        System.out.println("并集：" + union(listA, listB));
+        System.out.println("差集（A中有B中无）：" + difference(listA, listB));
+        System.out.println("差集（B中有A中无）：" + difference(listB, listA));
+
+        System.out.println("\n\033[1;36m---- 正确示例：\033[m\n");
+
+        System.out.println("包含：" + contains(listA, TestEntry.create(1, "第一"), (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
+        System.out.println("不包含：" + contains(listA, TestEntry.create(5, "第五"), (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
+        System.out.println("交集：" + intersection(listA, listB, (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
+        System.out.println("并集：" + union(listA, listB));
+        System.out.println("差集（A中有B中无）：" + difference(listA, listB, (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
+        System.out.println("差集（B中有A中无）：" + difference(listB, listA, (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
+    }
+
+    private static class TestEntry {
+        Integer id;
+        String name;
+
+        static TestEntry create(Integer id, String name) {
+            TestEntry entry = new TestEntry();
+            entry.id = id;
+            entry.name = name;
+            return entry;
+        }
+
+        @Override
+        public String toString() {
+            return "TestEntry{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    '}';
+        }
     }
 }
