@@ -37,32 +37,48 @@ public abstract class Lists {
     }
 
     /**
-     * 求两个集合的交集
+     * 求两个或两个以上元素集合的交集
      * <p>
      * 使用 {@link List#contains(Object)} 方式判断
      *
      * @param list1 集合1
      * @param list2 集合2
+     * @param lists 更多集合
      * @param <T>   元素类型
      * @return 交集
      */
-    public static <T> List<T> intersection(List<T> list1, List<T> list2) {
-        return intersection(list1, list2, list2::contains);
+    @SafeVarargs
+    public static <T> List<T> intersection(List<T> list1, List<T> list2, List<T>... lists) {
+        List<T> result = intersection(list1, list2, list2::contains);
+        if (null != lists && lists.length > 0) {
+            for (List<T> list : lists) {
+                result = intersection(result, list, list::contains);
+            }
+        }
+        return result;
     }
 
     /**
-     * 求两个集合的交集
+     * 求两个或两个以上元素集合的交集
      * <p>
      * 自定义匹配器 {@link Matcher#matched(Object, Object)}
      *
+     * @param matcher 匹配器
      * @param list1   集合1
      * @param list2   集合2
-     * @param matcher 匹配器
+     * @param lists   更多集合
      * @param <T>     元素类型
      * @return 交集
      */
-    public static <T> List<T> intersection(List<T> list1, List<T> list2, Matcher<T, T> matcher) {
-        return intersection(list1, list2, item1 -> list2.stream().anyMatch(item2 -> matcher.matched(item1, item2)));
+    @SafeVarargs
+    public static <T> List<T> intersection(Matcher<T, T> matcher, List<T> list1, List<T> list2, List<T>... lists) {
+        List<T> result = intersection(list1, list2, item1 -> list2.stream().anyMatch(item2 -> matcher.matched(item1, item2)));
+        if (null != lists && lists.length > 0) {
+            for (List<T> list : lists) {
+                result = intersection(result, list, item1 -> list.stream().anyMatch(item2 -> matcher.matched(item1, item2)));
+            }
+        }
+        return result;
     }
 
     /**
@@ -87,7 +103,7 @@ public abstract class Lists {
     }
 
     /**
-     * 多个集合的并集，元素可重复
+     * 多个集合的并集，结果集不去重
      *
      * @param lists 多个集合参数
      * @param <T>   元素类型
@@ -95,6 +111,19 @@ public abstract class Lists {
      */
     @SafeVarargs
     public static <T> List<T> union(List<T>... lists) {
+        return union(false, lists);
+    }
+
+    /**
+     * 多个集合的并集，结果集支持去重
+     *
+     * @param distinct 结果集是否去重
+     * @param lists    多个集合参数
+     * @param <T>      元素类型
+     * @return 并集
+     */
+    @SafeVarargs
+    public static <T> List<T> union(boolean distinct, List<T>... lists) {
         if (null == lists || lists.length == 0) {
             return null;
         }
@@ -104,20 +133,10 @@ public abstract class Lists {
                 result.addAll(list);
             }
         }
+        if (distinct) {
+            return result.stream().distinct().collect(Collectors.toList());
+        }
         return result;
-    }
-
-    /**
-     * 多个集合的并集，元素不重复
-     *
-     * @param lists 多个集合参数
-     * @param <T>   元素类型
-     * @return 并集
-     */
-    @SafeVarargs
-    public static <T> List<T> unionDistinct(List<T>... lists) {
-        List<T> result = union(lists);
-        return null == result ? null : result.stream().distinct().collect(Collectors.toList());
     }
 
     /**
@@ -259,7 +278,8 @@ public abstract class Lists {
         System.out.println("包含：" + contains(list1, "A"));
         System.out.println("不包含：" + contains(list1, "E"));
         System.out.println("交集：" + intersection(list1, list2));
-        System.out.println("并集：" + union(list1, list2));
+        System.out.println("并集（默认）：" + union(list1, list2));
+        System.out.println("并集（去重）：" + union(true, list1, list2));
         System.out.println("差集（1中有2中无）：" + difference(list1, list2));
         System.out.println("差集（2中有1中无）：" + difference(list2, list1));
 
@@ -281,10 +301,19 @@ public abstract class Lists {
                 TestEntry.create(7, "第七")
         );
 
+        List<TestEntry> listC = Lists.of(
+                TestEntry.create(3, "第三"),
+                TestEntry.create(5, "第五"),
+                TestEntry.create(6, "第六"),
+                TestEntry.create(8, "第⑧"),
+                TestEntry.create(7, "第七")
+        );
+
         System.out.println("包含：" + contains(listA, TestEntry.create(1, "第一")));
         System.out.println("不包含：" + contains(listA, TestEntry.create(5, "第五")));
         System.out.println("交集：" + intersection(listA, listB));
-        System.out.println("并集：" + union(listA, listB));
+        System.out.println("并集（默认）：" + union(listA, listB));
+        System.out.println("并集（去重）：" + union(true, listA, listB));
         System.out.println("差集（A中有B中无）：" + difference(listA, listB));
         System.out.println("差集（B中有A中无）：" + difference(listB, listA));
 
@@ -292,8 +321,13 @@ public abstract class Lists {
 
         System.out.println("包含：" + contains(listA, TestEntry.create(1, "第一"), (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
         System.out.println("不包含：" + contains(listA, TestEntry.create(5, "第五"), (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
-        System.out.println("交集：" + intersection(listA, listB, (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
-        System.out.println("并集：" + union(listA, listB));
+        System.out.println("A∩B - 交集：" + intersection((testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id), listA, listB));
+        System.out.println("B∩C - 交集：" + intersection((testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id), listB, listC));
+        System.out.println("A∩B∩C - 交集：" + intersection((testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id), listA, listB, listC));
+        System.out.println("A∪B - 并集（默认）：" + union(listA, listB));
+        System.out.println("A∪B - 并集（去重）：" + union(true, listA, listB));
+        System.out.println("B∪C - 并集（默认）：" + union(listB, listC));
+        System.out.println("A∪B∪C - 并集（默认）：" + union(listA, listB, listC));
         System.out.println("差集（A中有B中无）：" + difference(listA, listB, (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
         System.out.println("差集（B中有A中无）：" + difference(listB, listA, (testEntry, testEntry2) -> testEntry.id.equals(testEntry2.id)));
     }

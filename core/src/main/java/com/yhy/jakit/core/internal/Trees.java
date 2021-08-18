@@ -15,7 +15,7 @@ import java.util.function.Predicate;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class Trees {
+public abstract class Trees {
 
     /**
      * 从普通 List 集合转换成 Tree 结构
