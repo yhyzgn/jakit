@@ -25,7 +25,7 @@ public abstract class UUID {
      *
      * @return 无 - 连接的 UUID 值
      */
-    public static String getNoMinus() {
+    public static String getWithoutMinus() {
         return get().replace("-", "");
     }
 
@@ -52,8 +52,8 @@ public abstract class UUID {
      *
      * @return 无 - 连接的 UUID 大写值
      */
-    public static String upperNoMinus() {
-        return getNoMinus().toUpperCase();
+    public static String upperWithoutMinus() {
+        return getWithoutMinus().toUpperCase();
     }
 
     /**
@@ -61,7 +61,7 @@ public abstract class UUID {
      *
      * @return 无 - 连接的 UUID 小写值
      */
-    public static String lowerNoMinus() {
-        return getNoMinus().toLowerCase();
+    public static String lowerWithoutMinus() {
+        return getWithoutMinus().toLowerCase();
     }
 }
