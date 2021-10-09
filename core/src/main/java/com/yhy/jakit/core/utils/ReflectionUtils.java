@@ -1,5 +1,7 @@
 package com.yhy.jakit.core.utils;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -92,6 +94,51 @@ public abstract class ReflectionUtils {
             }
             targetClass = clazz.getSuperclass();
         } while (null != targetClass && targetClass != Object.class);
+    }
+
+    /**
+     * 获取一个字段
+     * <p>
+     * 按字段名获取
+     *
+     * @param clazz 类
+     * @param name  字段名
+     * @return 字段
+     */
+    @Nullable
+    public static Field findField(Class<?> clazz, String name) {
+        return findField(clazz, name, null);
+    }
+
+    /**
+     * 获取一个字段
+     * <p>
+     * 按字段名和字段类型获取
+     *
+     * @param clazz 类
+     * @param name  字段名
+     * @param type  字段类型
+     * @return 字段
+     */
+    @Nullable
+    public static Field findField(Class<?> clazz, @Nullable String name, @Nullable Class<?> type) {
+        if (null == clazz) {
+            throw new IllegalArgumentException("Class can not be null");
+        }
+        if (null == name && null == type) {
+            throw new IllegalArgumentException("Either name or type of the field must be specified");
+        }
+        Class<?> searchType = clazz;
+        while (Object.class != searchType && searchType != null) {
+            Field[] fields = getDeclaredFields(searchType);
+            for (Field field : fields) {
+                if ((name == null || name.equals(field.getName())) && (type == null || type.equals(field.getType()))) {
+                    return field;
+                }
+            }
+            searchType = searchType.getSuperclass();
+        }
+        return null;
     }
 
     /**
