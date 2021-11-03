@@ -14,9 +14,9 @@ group rootConfig.group
 version rootConfig.core.version
 
 dependencies {
-    implementation 'org.jetbrains:annotations:21.0.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    implementation 'org.jetbrains:annotations:22.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 test {
@@ -85,7 +85,7 @@ publishing {
                 licenses {
                     license {
                         name = 'Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
                         distribution = 'repo'
                         comments = 'A business-friendly OSS license'
                     }
@@ -113,13 +113,13 @@ publishing {
             def snapshotsRepoUrl = rootConfig.repository.snapshot
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
             credentials {
-//                username = ossrhUsername
-//                password = ossrhPassword
+                username = ossrhUsername
+                password = ossrhPassword
             }
         }
     }
 }
 
-//signing {
-//    sign publishing.publications.mavenJava
-//}
+signing {
+    sign publishing.publications.mavenJava
+}

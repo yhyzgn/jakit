@@ -9,7 +9,7 @@ package com.yhy.jakit.core.id;
  * @version 1.0.0
  * @since 1.0.0
  */
-public final class SnowFlake {
+public abstract class SnowFlake {
     // 开始时间截 (2020-01-01)
     private final static long START_TIMESTAMP = 1577808000000L;
 
@@ -78,7 +78,8 @@ public final class SnowFlake {
      * @return 实例
      */
     public static SnowFlake create(long workerId, long dataCenterId) {
-        return new SnowFlake(workerId, dataCenterId);
+        return new SnowFlake(workerId, dataCenterId) {
+        };
     }
 
     /**
@@ -101,7 +102,7 @@ public final class SnowFlake {
         // 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
         if (timestamp < lastTimestamp) {
             throw new RuntimeException(
-                    String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
+                String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
         }
 
         // 如果是同一时间生成的，则进行毫秒内序列
@@ -145,5 +146,12 @@ public final class SnowFlake {
      */
     private long timeGen() {
         return System.currentTimeMillis();
+    }
+
+    public static void main(String[] args) {
+        SnowFlake sf = SnowFlake.create(12, 12);
+        for (int i = 0; i < 20; i++) {
+            System.out.println(sf.nextStr());
+        }
     }
 }
