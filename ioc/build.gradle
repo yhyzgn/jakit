@@ -1,0 +1,125 @@
+import java.text.SimpleDateFormat
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+apply from: "../ext.gradle"
+
+def rootConfig = rootProject.ext
+
+group rootConfig.group
+version rootConfig.ioc.version
+
+dependencies {
+    implementation 'org.jetbrains:annotations:21.0.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    enabled true
+    afterEvaluate {
+        manifest {
+            attributes 'Implementation-Version': archiveVersion
+            attributes 'Built-Gradle': gradle.gradleVersion
+            attributes 'Bundle-DocURL': "https://${rootConfig.url}"
+            attributes 'Build-OS': System.getProperty("os.name")
+            attributes 'Built-By': System.getProperty("user.name")
+            attributes 'Build-Jdk': System.getProperty("java.version")
+            attributes 'Build-Timestamp': new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+        }
+    }
+}
+
+javadoc {
+    description = "生成jar格式的javadoc。"
+    // 只显示 protected 和 public 的类和成员
+    options.memberLevel = JavadocMemberLevel.PROTECTED
+    options.author = true
+    options.version = true
+    options.header = project.name
+    // 静默javadoc检查（比如不支持@date会报错等），jdk 8+
+    options.addStringOption('Xdoclint:none', '-quiet')
+    // 防止本地打开中文乱码
+    options.addStringOption("charset", "UTF-8")
+    // suppress warnings due to cross-module @see and @link references;
+    // note that global 'api' task does display all warnings.
+    logging.captureStandardError LogLevel.INFO
+    // suppress "## warnings" message
+    logging.captureStandardOutput LogLevel.INFO
+    // 编码一定要配置否则直接出错
+    options.encoding = "UTF-8"
+    options.charSet = "UTF-8"
+    // java9
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = rootConfig.group
+            artifactId = rootConfig.ioc.artifact
+            version = rootConfig.ioc.version
+            from components.java
+
+            pom {
+                name = rootConfig.ioc.artifact
+                description = rootConfig.ioc.description
+                url = "https://${rootConfig.url}"
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                        comments = 'A business-friendly OSS license'
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'yhyzgn'
+                        email = 'yhyzgn@gmail.com'
+                        url = "https://github.com/yhyzgn/"
+                    }
+                }
+                scm {
+                    url = "https://${rootConfig.url}.git"
+                    connection = "scm:git:https://${rootConfig.url}.git"
+                    developerConnection = "scm:git:https://${rootConfig.url}.git"
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name 'oss'
+            def releasesRepoUrl = rootConfig.repository.release
+            def snapshotsRepoUrl = rootConfig.repository.snapshot
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+//                username = ossrhUsername
+//                password = ossrhPassword
+            }
+        }
+    }
+}
+
+//signing {
+//    sign publishing.publications.mavenJava
+//}

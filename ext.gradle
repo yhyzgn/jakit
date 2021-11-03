@@ -11,4 +11,9 @@ ext {
             version    : '1.0.2',
             description: 'Some core components.'
     ] as LinkedHashMap
+    ioc = [
+            artifact   : 'ioc',
+            version    : '1.0.0',
+            description: 'IOC'
+    ] as LinkedHashMap
 }

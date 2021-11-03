@@ -1,2 +1,4 @@
 rootProject.name = 'jakit'
+
 include 'core'
+include 'ioc'
