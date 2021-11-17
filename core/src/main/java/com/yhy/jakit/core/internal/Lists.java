@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -60,22 +61,20 @@ public abstract class Lists {
 
     /**
      * 求两个或两个以上元素集合的交集
-     * <p>
-     * 自定义匹配器 {@link Matcher#matched(Object, Object)}
      *
-     * @param matcher 匹配器
-     * @param list1   集合1
-     * @param list2   集合2
-     * @param lists   更多集合
-     * @param <T>     元素类型
+     * @param predicate 条件匹配器
+     * @param list1     集合1
+     * @param list2     集合2
+     * @param lists     更多集合
+     * @param <T>       元素类型
      * @return 交集
      */
     @SafeVarargs
-    public static <T> List<T> intersection(Matcher<T, T> matcher, List<T> list1, List<T> list2, List<T>... lists) {
-        List<T> result = intersection(list1, list2, item1 -> list2.stream().anyMatch(item2 -> matcher.matched(item1, item2)));
+    public static <T> List<T> intersection(BiPredicate<T, T> predicate, List<T> list1, List<T> list2, List<T>... lists) {
+        List<T> result = intersection(list1, list2, item1 -> list2.stream().anyMatch(item2 -> predicate.test(item1, item2)));
         if (null != lists && lists.length > 0) {
             for (List<T> list : lists) {
-                result = intersection(result, list, item1 -> list.stream().anyMatch(item2 -> matcher.matched(item1, item2)));
+                result = intersection(result, list, item1 -> list.stream().anyMatch(item2 -> predicate.test(item1, item2)));
             }
         }
         return result;
@@ -160,18 +159,16 @@ public abstract class Lists {
      * list 关于 u 的相对补集，差集
      * <p>
      * 两个集合类型可以不同，返回值类型与全集类型相同
-     * <p>
-     * 自定义匹配器 {@link Matcher#matched(Object, Object)}
      *
-     * @param u       全集
-     * @param list    任意集合
-     * @param matcher 匹配器
-     * @param <S>     全集元素类型
-     * @param <T>     集合元素类型
+     * @param u         全集
+     * @param list      任意集合
+     * @param predicate 匹配器
+     * @param <S>       全集元素类型
+     * @param <T>       集合元素类型
      * @return 补集
      */
-    public static <S, T> List<S> difference(List<S> u, List<T> list, Matcher<S, T> matcher) {
-        return difference(u, list, itemU -> list.stream().noneMatch(item -> matcher.matched(itemU, item)));
+    public static <S, T> List<S> difference(List<S> u, List<T> list, BiPredicate<S, T> predicate) {
+        return difference(u, list, itemU -> list.stream().noneMatch(item -> predicate.test(itemU, item)));
     }
 
     /**
@@ -237,36 +234,15 @@ public abstract class Lists {
 
     /**
      * List 集合中是否包含某个元素
-     * <p>
-     * 自定义匹配器 {@link Matcher#matched(Object, Object)}
      *
-     * @param src     集合
-     * @param element 元素
-     * @param matcher 匹配器
-     * @param <T>     元素类型
+     * @param src       集合
+     * @param element   元素
+     * @param predicate 匹配器
+     * @param <T>       元素类型
      * @return 是否包含
      */
-    public static <T> boolean contains(List<T> src, T element, Matcher<T, T> matcher) {
-        return isEmpty(src) || null == element || src.stream().anyMatch(item -> matcher.matched(item, element));
-    }
-
-    /**
-     * 相同或不同的两个元素匹配器
-     *
-     * @param <S> 元素1类型
-     * @param <T> 元素2类型
-     */
-    @FunctionalInterface
-    public interface Matcher<S, T> {
-
-        /**
-         * 是否匹配
-         *
-         * @param s 元素1
-         * @param t 元素2
-         * @return 是否匹配
-         */
-        boolean matched(S s, T t);
+    public static <T> boolean contains(List<T> src, T element, BiPredicate<T, T> predicate) {
+        return isEmpty(src) || null == element || src.stream().anyMatch(item -> predicate.test(item, element));
     }
 
     public static void main(String[] args) {
@@ -287,26 +263,26 @@ public abstract class Lists {
         System.out.println("\033[1;31m---- 错误示例：\033[m\n");
 
         List<TestEntry> listA = Lists.of(
-                TestEntry.create(1, "第一"),
-                TestEntry.create(2, "第二"),
-                TestEntry.create(3, "第三"),
-                TestEntry.create(4, "第四")
+            TestEntry.create(1, "第一"),
+            TestEntry.create(2, "第二"),
+            TestEntry.create(3, "第三"),
+            TestEntry.create(4, "第四")
         );
 
         List<TestEntry> listB = Lists.of(
-                TestEntry.create(3, "第三"),
-                TestEntry.create(4, "第四"),
-                TestEntry.create(5, "第五"),
-                TestEntry.create(6, "第六"),
-                TestEntry.create(7, "第七")
+            TestEntry.create(3, "第三"),
+            TestEntry.create(4, "第四"),
+            TestEntry.create(5, "第五"),
+            TestEntry.create(6, "第六"),
+            TestEntry.create(7, "第七")
         );
 
         List<TestEntry> listC = Lists.of(
-                TestEntry.create(3, "第三"),
-                TestEntry.create(5, "第五"),
-                TestEntry.create(6, "第六"),
-                TestEntry.create(8, "第⑧"),
-                TestEntry.create(7, "第七")
+            TestEntry.create(3, "第三"),
+            TestEntry.create(5, "第五"),
+            TestEntry.create(6, "第六"),
+            TestEntry.create(8, "第⑧"),
+            TestEntry.create(7, "第七")
         );
 
         System.out.println("包含：" + contains(listA, TestEntry.create(1, "第一")));
@@ -346,9 +322,9 @@ public abstract class Lists {
         @Override
         public String toString() {
             return "TestEntry{" +
-                    "id=" + id +
-                    ", name='" + name + '\'' +
-                    '}';
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
         }
     }
 }

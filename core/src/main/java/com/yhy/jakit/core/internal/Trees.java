@@ -2,6 +2,7 @@ package com.yhy.jakit.core.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**
@@ -22,11 +23,11 @@ public abstract class Trees {
      *
      * @param elements         原始数据
      * @param rootPredicate    父节点的条件
-     * @param elementPredicate 匹配各级节点的条件
+     * @param elementPredicate 匹配各级节点的条件，回调参数分别是 parent, element
      * @param <T>              节点类型
      * @return 树
      */
-    public static <T extends Node<T>> List<T> fromList(List<T> elements, Predicate<T> rootPredicate, Predicate<T> elementPredicate) {
+    public static <T extends Node<T>> List<T> fromList(List<T> elements, Predicate<T> rootPredicate, BiPredicate<T, T> elementPredicate) {
         if (Lists.isEmpty(elements)) {
             return elements;
         }
@@ -40,9 +41,7 @@ public abstract class Trees {
         });
 
         // 再用娃去选父节点
-        result.forEach(item -> {
-            item.setChildren(buildChildren(elements, elementPredicate));
-        });
+        result.forEach(item -> item.setChildren(buildChildren(item, elements, elementPredicate)));
 
         return result;
     }
@@ -78,22 +77,24 @@ public abstract class Trees {
     /**
      * 获取子树
      *
-     * @param tree 整树
-     * @param root 子树根节点
-     * @param <T>  元素类型
-     * @param <R>  子树根节点元素类型
+     * @param tree      整树
+     * @param predicate 子树提取条件
+     * @param <T>       元素类型
      * @return 子树
      */
-    public static <T extends Node<T>, R> List<T> pick(List<T> tree, R root, Lists.Matcher<T, R> matcher) {
-        if (null == tree || null == root || root.equals(0L)) {
-            return tree;
+    public static <T extends Node<T>> List<T> pick(List<T> tree, Predicate<T> predicate) {
+        if (null == tree) {
+            return null;
         }
         for (T t : tree) {
-            if (matcher.matched(t, root)) {
+            if (predicate.test(t)) {
                 return Lists.of(t);
             }
             if (Lists.isNotEmpty(t.getChildren())) {
-                return pick(t.getChildren(), root, matcher);
+                List<T> temp = pick(t.getChildren(), predicate);
+                if (Lists.isNotEmpty(temp)) {
+                    return temp;
+                }
             }
         }
         return null;
@@ -103,18 +104,18 @@ public abstract class Trees {
      * 递归造娃
      *
      * @param elements  列表元素
-     * @param predicate 条件
+     * @param predicate 条件，回调参数分别是 parent, element
      * @param <T>       节点类型
      * @return 一堆娃
      */
-    private static <T extends Node<T>> List<T> buildChildren(List<T> elements, Predicate<T> predicate) {
+    private static <T extends Node<T>> List<T> buildChildren(T parent, List<T> elements, BiPredicate<T, T> predicate) {
         if (Lists.isEmpty(elements)) {
             return elements;
         }
 
         List<T> children = new ArrayList<>();
         elements.forEach(el -> {
-            if (predicate.test(el)) {
+            if (predicate.test(parent, el)) {
                 children.add(el);
             }
         });
@@ -125,7 +126,7 @@ public abstract class Trees {
 
         // 递归造娃，娃造娃
         for (T t : children) {
-            t.setChildren(buildChildren(elements, predicate));
+            t.setChildren(buildChildren(t, elements, predicate));
         }
 
         return children;
