@@ -141,7 +141,7 @@ public abstract class RegexpUtils {
                 int idCardMod = sum % 11;
 
                 // 计算校验码是否正确
-                return idCardY[idCardMod].toUpperCase().equals(String.valueOf(idCardLast).toUpperCase());
+                return idCardY[idCardMod].equalsIgnoreCase(String.valueOf(idCardLast));
             }
         }
         return false;
