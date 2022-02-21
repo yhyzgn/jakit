@@ -35,7 +35,7 @@ public abstract class ComplexUtils {
      * @throws IllegalArgumentException 字符串复杂度异常
      */
     public static void check(String password, Complexity complexity) throws IllegalArgumentException {
-        check(password, complexity.pattern);
+        check(password, complexity.pattern, complexity.msg);
     }
 
     /**
@@ -45,9 +45,9 @@ public abstract class ComplexUtils {
      * @param pattern  复杂度正则表达式
      * @throws IllegalArgumentException 字符串复杂度异常
      */
-    public static void check(String password, String pattern) throws IllegalArgumentException {
+    public static void check(String password, String pattern, String msg) throws IllegalArgumentException {
         if (!password.matches(pattern)) {
-            throw new IllegalArgumentException("字符串必须包含字母、数字、特殊字符至少两种");
+            throw new IllegalArgumentException(msg);
         }
     }
 
@@ -62,28 +62,28 @@ public abstract class ComplexUtils {
          * <p>
          * 排除：小写字母 | 大写字母 | 数字 | 特殊字符 这几种情况，剩下的至少包含了两种字符
          */
-        KINDS_2_SENSITIVE("^(?![a-z]+$)(?![A-Z]+$)(?![0-9]+$)(?![\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$"),
+        KINDS_2_SENSITIVE("^(?![a-z]+$)(?![A-Z]+$)(?![0-9]+$)(?![\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$", "字符串必须包含大写字母、小写字母、数字、特殊字符至少两种"),
 
         /**
          * 字符串必须包含字母（大小写不敏感）、数字、特殊字符至少两种
          * <p>
          * 排除：小写字母-大写字母 | 数字 | 特殊字符 这几种情况，剩下的至少包含了两种字符
          */
-        KINDS_2_INSENSITIVE("^(?![a-zA-Z]+$)(?![0-9]+$)(?![\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$"),
+        KINDS_2_INSENSITIVE("^(?![a-zA-Z]+$)(?![0-9]+$)(?![\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$", "字符串必须包含字母、数字、特殊字符至少两种"),
 
         /**
          * 字符串必须包含字母（大小写敏感）、数字、特殊字符至少三种
          * <p>
          * 排除：小写字母-大写字母 | 小写字母-数字 | 小写字母-特殊字符 | 大写字母-数字 | 大写字母-特殊字符 | 数字-特殊字符 这几种情况，剩下的至少包含了三种字符
          */
-        KINDS_3_SENSITIVE("^(?![a-zA-Z]+$)(?![a-z0-9]+$)(?![a-z\\W_]+$)(?![A-Z0-9]+$)(?![A-Z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$"),
+        KINDS_3_SENSITIVE("^(?![a-zA-Z]+$)(?![a-z0-9]+$)(?![a-z\\W_]+$)(?![A-Z0-9]+$)(?![A-Z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$", "字符串必须包含大写字母、小写字母、数字、特殊字符至少三种"),
 
         /**
          * 字符串必须包含字母（大小写不敏感）、数字、特殊字符至少三种
          * <p>
          * 排除：小写字母-大写字母-数字 | 小写字母-大写字母-特殊字符 | 数字-特殊字符 这几种情况，剩下的至少包含了三种字符
          */
-        KINDS_3_INSENSITIVE("^(?![a-zA-Z0-9]+$)(?![a-zA-Z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$"),
+        KINDS_3_INSENSITIVE("^(?![a-zA-Z0-9]+$)(?![a-zA-Z\\W_]+$)(?![0-9\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$", "字符串必须包含字母、数字、特殊字符至少三种"),
 
         /**
          * 字符串必须包含字母（大小写敏感）、数字、特殊字符至少四种
@@ -92,21 +92,23 @@ public abstract class ComplexUtils {
          * <p>
          * 至少包含四种字符时，将不存在 大小写不敏感 的情况，否则无法满足四种类型
          */
-        KIND_4_SENSITIVE("^(?![a-zA-Z0-9]+$)(?![a-zA-Z\\W_]+$)(?![a-z0-9\\W_]+$)(?![A-Z0-9\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$"),
+        KIND_4_SENSITIVE("^(?![a-zA-Z0-9]+$)(?![a-zA-Z\\W_]+$)(?![a-z0-9\\W_]+$)(?![A-Z0-9\\W_]+$)[a-zA-Z0-9\\W_]{6,20}$", "字符串必须包含大写字母、小写字母、数字、特殊字符至少四种"),
         ;
 
         /**
          * 复杂度正则表达式
          */
         private final String pattern;
+        private final String msg;
 
         /**
          * 内置构造器
          *
          * @param pattern 复杂度正则表达式
          */
-        Complexity(String pattern) {
+        Complexity(String pattern, String msg) {
             this.pattern = pattern;
+            this.msg = msg;
         }
 
         /**
@@ -116,6 +118,15 @@ public abstract class ComplexUtils {
          */
         public String getPattern() {
             return pattern;
+        }
+
+        /**
+         * 获取复杂度提示信息
+         *
+         * @return 复杂度提示信息
+         */
+        public String getMsg() {
+            return msg;
         }
     }
 
@@ -148,8 +159,6 @@ public abstract class ComplexUtils {
 
     private static void test(Map<String, String> testMap, Complexity complexity) {
         System.out.println("====================================================== " + complexity + " ======================================================");
-        testMap.forEach((key, value) -> {
-            System.out.println(value + " " + key.matches(complexity.getPattern()));
-        });
+        testMap.forEach((key, value) -> System.out.println(value + " " + key.matches(complexity.getPattern())));
     }
 }
