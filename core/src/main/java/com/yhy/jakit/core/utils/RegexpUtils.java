@@ -153,7 +153,7 @@ public abstract class RegexpUtils {
      * @param text 编号
      * @return 是否
      */
-    public static boolean isCreditCard(String text) {
+    public static boolean isCreditCode(String text) {
         if (text.length() == 18) {
             String baseCode = "0123456789ABCDEFGHJKLMNPQRTUWXY";
             char[] baseCodeArray = baseCode.toCharArray();
