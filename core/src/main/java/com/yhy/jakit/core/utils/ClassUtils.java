@@ -45,42 +45,42 @@ public abstract class ClassUtils {
     /**
      * 获取包下的所有类
      *
-     * @param pkg         包
-     * @param annotations 注解
+     * @param pkg            包
+     * @param annotationList 注解
      * @return 类
      */
-    public static List<Class<?>> getClassList(Package pkg, List<Class<? extends Annotation>> annotations) {
-        return getClassList(pkg.getName(), annotations);
+    public static List<Class<?>> annotated(Package pkg, List<Class<? extends Annotation>> annotationList) {
+        return annotated(pkg.getName(), annotationList);
     }
 
     /**
      * 获取包下的所有类
      *
-     * @param packageName 包
-     * @param annotations 注解
+     * @param packageName    包
+     * @param annotationList 注解
      * @return 类
      */
-    public static List<Class<?>> getClassList(String packageName, List<Class<? extends Annotation>> annotations) {
+    public static List<Class<?>> annotated(String packageName, List<Class<? extends Annotation>> annotationList) {
         List<Class<?>> classList = loadClassListInPackage(packageName);
-        return getClassList(classList, annotations);
+        return annotated(classList, annotationList);
     }
 
     /**
      * 获取被注解的类
      *
-     * @param classList   所有类
-     * @param annotations 注解
+     * @param classList      所有类
+     * @param annotationList 注解
      * @return 被注解的类
      */
-    public static List<Class<?>> getClassList(List<Class<?>> classList, List<Class<? extends Annotation>> annotations) {
-        if (null != annotations && annotations.size() > 0) {
+    public static List<Class<?>> annotated(List<Class<?>> classList, List<Class<? extends Annotation>> annotationList) {
+        if (null != annotationList && annotationList.size() > 0) {
             List<Class<?>> temp = new ArrayList<>(classList);
             classList = new ArrayList<>();
             for (Class<?> clazz : temp) {
                 Annotation[] tempAnnotations = clazz.getAnnotations();
-                List<Class<? extends Annotation>> annotationList = Arrays.stream(tempAnnotations).map(Annotation::annotationType).collect(Collectors.toList());
-                annotationList.retainAll(annotations);
-                if (annotationList.size() == annotations.size()) {
+                List<Class<? extends Annotation>> tempList = Arrays.stream(tempAnnotations).map(Annotation::annotationType).collect(Collectors.toList());
+                tempList.retainAll(annotationList);
+                if (tempList.size() == annotationList.size()) {
                     classList.add(clazz);
                 }
             }
@@ -89,34 +89,101 @@ public abstract class ClassUtils {
     }
 
     /**
-     * 获取接口实现类，普通子类
+     * 获取继承了某个类的所有子类
+     * <p>
+     * 不包含父类自身
      *
      * @param packageName 包
-     * @param assigned    父类，包括接口类
+     * @param basic       父类
      * @return 类
      */
-    public static List<Class<?>> getClassList(String packageName, Class<?> assigned) {
-        List<Class<?>> classList = loadClassListInPackage(packageName);
-        return getClassList(classList, assigned);
+    public static List<Class<?>> extended(String packageName, Class<?> basic) {
+        return extended(packageName, basic, false);
     }
 
     /**
-     * 获取接口实现类，普通子类
+     * 获取继承了某个类的所有子类
+     *
+     * @param packageName 包
+     * @param basic       父类
+     * @param includeSelf 是否包含父类自身
+     * @return 类
+     */
+    public static List<Class<?>> extended(String packageName, Class<?> basic, boolean includeSelf) {
+        List<Class<?>> classList = loadClassListInPackage(packageName);
+        return extended(classList, basic);
+    }
+
+    /**
+     * 获取继承了某个类的所有子类
+     * <p>
+     * 不包含父类自身
      *
      * @param classList 所有类
-     * @param assigned  父类，包括接口类
+     * @param basic     父类
      * @return 被注解的类
      */
-    public static List<Class<?>> getClassList(List<Class<?>> classList, Class<?> assigned) {
+    public static List<Class<?>> extended(List<Class<?>> classList, Class<?> basic) {
+        return extended(classList, basic, false);
+    }
+
+    /**
+     * 获取继承了某个类的所有子类
+     *
+     * @param classList   所有类
+     * @param basic       父类
+     * @param includeSelf 是否包含父类自身
+     * @return 被注解的类
+     */
+    public static List<Class<?>> extended(List<Class<?>> classList, Class<?> basic, boolean includeSelf) {
+        if (basic.isInterface()) {
+            throw new IllegalArgumentException("Class 'basic' can not be interface.");
+        }
         if (CollectionUtils.isNotEmpty(classList)) {
-            // 如果是接口类，找到其所有实现类
             // 如果是普通类，找到其子类
-            // 排除自身
-            return classList.stream().filter(clazz -> assigned.isAssignableFrom(clazz) && clazz != assigned).collect(Collectors.toList());
+            // 根据 includeSelf 判断是否包含自身
+            return classList.stream().filter(clazz -> basic.isAssignableFrom(clazz) && (includeSelf || basic != clazz)).collect(Collectors.toList());
         }
         return classList;
     }
 
+    /**
+     * 获取接口实现类
+     *
+     * @param packageName 包
+     * @param face        接口类
+     * @return 类
+     */
+    public static List<Class<?>> implemented(String packageName, Class<?> face) {
+        List<Class<?>> classList = loadClassListInPackage(packageName);
+        return implemented(classList, face);
+    }
+
+    /**
+     * 获取接口实现类
+     *
+     * @param classList 所有类
+     * @param face      接口类
+     * @return 被注解的类
+     */
+    public static List<Class<?>> implemented(List<Class<?>> classList, Class<?> face) {
+        if (!face.isInterface()) {
+            throw new IllegalArgumentException("Class 'face' must be an interface.");
+        }
+        if (CollectionUtils.isNotEmpty(classList)) {
+            // 接口类，找到其所有实现类
+            // 并排除自身
+            return classList.stream().filter(clazz -> face.isAssignableFrom(clazz) && clazz != face).collect(Collectors.toList());
+        }
+        return classList;
+    }
+
+    /**
+     * 按包名获取类
+     *
+     * @param packageName 包名
+     * @return 类
+     */
     @NotNull
     private static List<Class<?>> loadClassListInPackage(String packageName) {
         List<Class<?>> classList = new ArrayList<>();

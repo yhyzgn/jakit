@@ -16,7 +16,7 @@ public class ClassUtilsTest {
 
     @Test
     public void testClass() {
-        List<Class<?>> classList = ClassUtils.getClassList("com.yhy", TestInterface.class);
+        List<Class<?>> classList = ClassUtils.implemented("com.yhy", TestInterface.class);
         System.out.println(classList);
     }
 }
