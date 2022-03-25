@@ -148,7 +148,9 @@ public abstract class RegexpUtils {
     }
 
     /**
-     * 是否是营业执照
+     * 统一社会信用代码校验
+     * <p>
+     * http://c.gb688.cn/bzgk/gb/showGb?type=online&hcno=24691C25985C1073D3A7C85629378AC0
      *
      * @param text 编号
      * @return 是否
@@ -157,7 +159,7 @@ public abstract class RegexpUtils {
         if (text.length() == 18) {
             String baseCode = "0123456789ABCDEFGHJKLMNPQRTUWXY";
             char[] baseCodeArray = baseCode.toCharArray();
-            Map<Character, Integer> codes = new HashMap<Character, Integer>();
+            Map<Character, Integer> codes = new HashMap<>();
             for (int i = 0; i < baseCode.length(); i++) {
                 codes.put(baseCodeArray[i], i);
             }
@@ -176,7 +178,7 @@ public abstract class RegexpUtils {
                 sum += (codes.get(key) * wi[i]);
             }
             int temp = sum % 31;
-            //统一社会信用代码校验规则有说余数为0时，校验位为0
+            // 统一社会信用代码校验规则有说余数为 0 时，校验位为 0
             if (temp == 0) {
                 temp = 31;
             }
