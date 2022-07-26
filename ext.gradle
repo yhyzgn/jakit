@@ -7,8 +7,8 @@ ext {
             snapshot: 'https://oss.sonatype.org/content/repositories/snapshots'
     ] as LinkedHashMap
     core = [
-            artifact   : 'core',
-            version    : '1.0.8',
-            description: 'Some core components.'
+            artifact   : 'util',
+            version    : '1.0.0',
+            description: 'Some util components.'
     ] as LinkedHashMap
 }
