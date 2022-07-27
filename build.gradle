@@ -11,29 +11,9 @@ version rootConfig.version
 allprojects {
     repositories {
         mavenLocal()
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         mavenCentral()
         gradlePluginPortal()
         google()
-    }
-
-    task sourceJar(type: Jar) {
-        classifier "sources"
-        from sourceSets.main.allSource
-    }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier "javadoc"
-        from javadoc
-    }
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-        options.warnings = false
-        options.deprecation = true
-        options.compilerArgs += ["-parameters"]
-    }
-
-    tasks.withType(GenerateModuleMetadata) {
-        enabled = false
     }
 }

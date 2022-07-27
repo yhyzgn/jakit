@@ -6,9 +6,69 @@ ext {
             release : 'https://oss.sonatype.org/service/local/staging/deploy/maven2',
             snapshot: 'https://oss.sonatype.org/content/repositories/snapshots'
     ] as LinkedHashMap
-    core = [
+    util = [
             artifact   : 'util',
             version    : '1.0.0',
             description: 'Some util components.'
+    ] as LinkedHashMap
+    simpleSupport = [
+            artifact   : 'simple-support',
+            version    : '1.0.0',
+            description: 'Some simple support library components.'
+    ] as LinkedHashMap
+    starter = [
+            artifact   : 'jakit-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'SpringBoot starter.'
+    ] as LinkedHashMap
+    starterJpa = [
+            artifact   : 'dynamic-datasource-jpa-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'Dynamic datasource for jpa.'
+    ] as LinkedHashMap
+    simpleJpa = [
+            artifact   : 'dynamic-datasource-jpa-spring-boot-starter-simple',
+            version    : '1.0.0',
+            description: 'Simple of dynamic-datasource-jpa-spring-boot-starter.'
+    ] as LinkedHashMap
+    starterMybatis = [
+            artifact   : 'dynamic-datasource-mybatis-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'Dynamic datasource for mybatis.'
+    ] as LinkedHashMap
+    simpleMybatis = [
+            artifact   : 'dynamic-datasource-mybatis-spring-boot-starter-simple',
+            version    : '1.0.0',
+            description: 'Simple of dynamic-datasource-mybatis-spring-boot-starter.'
+    ] as LinkedHashMap
+    starterRedis = [
+            artifact   : 'dynamic-datasource-redis-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'Dynamic datasource for redis template and connection factory.'
+    ] as LinkedHashMap
+    simpleRedis = [
+            artifact   : 'dynamic-datasource-redis-spring-boot-starter-simple',
+            version    : '1.0.0',
+            description: 'Simple of dynamic-datasource-redis-spring-boot-starter.'
+    ] as LinkedHashMap
+    starterMongo = [
+            artifact   : 'dynamic-datasource-mongo-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'Dynamic datasource for mongo template and connection factory.'
+    ] as LinkedHashMap
+    simpleMongo = [
+            artifact   : 'dynamic-datasource-mongo-spring-boot-starter-simple',
+            version    : '1.0.0',
+            description: 'Simple of dynamic-datasource-mongo-spring-boot-starter.'
+    ] as LinkedHashMap
+    starterCrypto = [
+            artifact   : 'crypto-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'Some algorithm cipher.'
+    ] as LinkedHashMap
+    simpleCrypto = [
+            artifact   : 'crypto-spring-boot-starter-simple',
+            version    : '1.0.0',
+            description: 'Simple of crypto-spring-boot-starter.'
     ] as LinkedHashMap
 }

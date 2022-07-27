@@ -1,0 +1,182 @@
+import java.text.SimpleDateFormat
+
+plugins {
+    id 'org.springframework.boot' version '2.7.2'
+    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id "java-library"
+    id "maven-publish"
+    id "signing"
+}
+
+apply from: "../ext.gradle"
+
+def rootConfig = rootProject.ext
+
+group rootConfig.group
+version rootConfig.starterRedis.version
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.apache.commons:commons-pool2'
+    compileOnly 'redis.clients:jedis'
+    api project(':util')
+    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task replaceVersion() {
+    def version = rootProject.starterRedis.version.replace('-', '--')
+    ['../README.md', './README.md'].each {
+        println("Resetting the version[${version}] of ${rootConfig.starterRedis.artifact} in ${it} file.")
+        ant.replaceregexp(
+                file: "${it}",
+                match: "dynamic--datasource--redis--spring--boot--starter-(.+)?-blueviolet",
+                replace: "dynamic--datasource--redis--spring--boot--starter-${version}-blueviolet",
+                flags: 'g',
+                byline: "true"
+        )
+    }
+}
+
+// publish 前先 clean
+compileJava.dependsOn(clean, replaceVersion)
+publish.dependsOn(publishToMavenLocal)
+
+task sourceJar(type: Jar) {
+    classifier "sources"
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.warnings = false
+    options.deprecation = true
+    options.compilerArgs += ["-parameters"]
+}
+
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
+
+// https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
+jar {
+    enabled true
+    classifier ''
+    afterEvaluate {
+        manifest {
+            attributes 'Implementation-Version': archiveVersion
+            attributes 'Built-Gradle': gradle.gradleVersion
+            attributes 'Bundle-DocURL': "https://${rootConfig.url}"
+            attributes 'Build-OS': System.getProperty("os.name")
+            attributes 'Built-By': System.getProperty("user.name")
+            attributes 'Build-Jdk': System.getProperty("java.version")
+            attributes 'Build-Timestamp': new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+        }
+    }
+}
+
+javadoc {
+    description = "生成jar格式的javadoc。"
+    // 只显示 protected 和 public 的类和成员
+    options.memberLevel = JavadocMemberLevel.PROTECTED
+    options.author = true
+    options.version = true
+    options.header = project.name
+    // 静默javadoc检查（比如不支持@date会报错等），jdk 8+
+    options.addStringOption('Xdoclint:none', '-quiet')
+    // 防止本地打开中文乱码
+    options.addStringOption("charset", "UTF-8")
+    // suppress warnings due to cross-module @see and @link references;
+    // note that global 'api' task does display all warnings.
+    logging.captureStandardError LogLevel.INFO
+    // suppress "## warnings" message
+    logging.captureStandardOutput LogLevel.INFO
+    // 编码一定要配置否则直接出错
+    options.encoding = "UTF-8"
+    options.charSet = "UTF-8"
+    // java9
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = rootConfig.group
+            artifactId = rootConfig.starterRedis.artifact
+            version = rootConfig.starterRedis.version
+            from components.java
+
+            pom {
+                name = rootConfig.starterRedis.artifact
+                description = rootConfig.starterRedis.description
+                url = "https://${rootConfig.url}"
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                        comments = 'A business-friendly OSS license'
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'yhy'
+                        email = 'yhy@gmail.com'
+                        url = "https://github.com/yhyzgn/"
+                    }
+                }
+                scm {
+                    url = "https://${rootConfig.url}.git"
+                    connection = "scm:git:https://${rootConfig.url}.git"
+                    developerConnection = "scm:git:https://${rootConfig.url}.git"
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name "oss"
+            allowInsecureProtocol true
+            def releasesRepoUrl = rootConfig.repository.release
+            def snapshotsRepoUrl = rootConfig.repository.snapshot
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//            credentials {
+//                username = ossrhUsername
+//                password = ossrhPassword
+//            }
+        }
+    }
+}
+
+//signing {
+//    sign publishing.publications.mavenJava
+//}

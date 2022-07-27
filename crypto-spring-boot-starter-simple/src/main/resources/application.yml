@@ -1,0 +1,25 @@
+server:
+  port: 8888
+
+#crypto:
+#  algorithm: aes
+#  mode: cbc
+#  key: a80a28b4f10c4794ae32815b47bc50e7
+#  iv: c6320b4f17334fbd
+
+crypto:
+  base-package: com.yhy.saas.simple.crypto
+  #  algorithm: sm2
+  #  format: base64url
+  #  # 服务端私钥，用来解密客户端发送过来的参数
+  #  # 对应的服务端公钥为：MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEulb0-DdKYUprNG0keh-X_RBhkNk7o84gohJorWKNqE8nSNYLve5kp7KJBa6M4j5gQoDlL2V-Z1VFFNVKCci18w==
+  #  private-key: MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQg72p39akvBQBXxxdOVSTG60B4TXyWOtB5jG21GAyjP96gCgYIKoEcz1UBgi2hRANCAAS6VvT4N0phSms0bSR6H5f9EGGQ2TujziCiEmitYo2oTydI1gu97mSnsokFroziPmBCgOUvZX5nVUUU1UoJyLXz
+  #  # 客户端公钥，响应请求前对数据加密后再返回
+  #  # 对应的客户端私钥为：MIGTAgEAMBMGByqGSM49AgEGCCqBHM9VAYItBHkwdwIBAQQgugD8QPtQhtzTvUEsXhgLhaGVGGTLlVEjV9RDKFMWiTKgCgYIKoEcz1UBgi2hRANCAASNC6hQhLsHqewZetsvybxPwG3cg7RksYaIj3b1F1k5HeKrL8P55xYUWymSriEfXIc8xzImSJkoQhzk6LMKWUAF
+  #  public-key: MFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEjQuoUIS7B6nsGXrbL8m8T8Bt3IO0ZLGGiI929RdZOR3iqy_D-ecWFFspkq4hH1yHPMcyJkiZKEIc5OizCllABQ==
+  algorithm: aes
+  padding: pkcs7
+  mode: cbc
+  format: base64url
+  key: a80a28b4f10c4794ae32815b47bc50e7
+  iv: c6320b4f17334fbd

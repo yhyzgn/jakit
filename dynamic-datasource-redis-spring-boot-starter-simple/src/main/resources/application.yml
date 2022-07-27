@@ -1,0 +1,10 @@
+server:
+  port: 8899
+
+spring:
+  redis:
+    host: 123.207.86.139
+    password: Redis@rdtest@2018
+    port: 6379
+    database: 5
+    key-prefix: test-dynamic

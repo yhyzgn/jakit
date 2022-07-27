@@ -150,7 +150,7 @@ public abstract class RegexpUtils {
     /**
      * 统一社会信用代码校验
      * <p>
-     * http://c.gb688.cn/bzgk/gb/showGb?type=online&hcno=24691C25985C1073D3A7C85629378AC0
+     * https://c.gb688.cn/bzgk/gb/showGb?type=online&hcno=24691C25985C1073D3A7C85629378AC0
      *
      * @param text 编号
      * @return 是否
