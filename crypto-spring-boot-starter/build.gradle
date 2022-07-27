@@ -126,7 +126,7 @@ publishing {
                 licenses {
                     license {
                         name = 'Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
                         distribution = 'repo'
                         comments = 'A business-friendly OSS license'
                     }
@@ -154,14 +154,14 @@ publishing {
             def releasesRepoUrl = rootConfig.repository.release
             def snapshotsRepoUrl = rootConfig.repository.snapshot
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-//            credentials {
-//                username = ossrhUsername
-//                password = ossrhPassword
-//            }
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
         }
     }
 }
 
-//signing {
-//    sign publishing.publications.mavenJava
-//}
+signing {
+    sign publishing.publications.mavenJava
+}

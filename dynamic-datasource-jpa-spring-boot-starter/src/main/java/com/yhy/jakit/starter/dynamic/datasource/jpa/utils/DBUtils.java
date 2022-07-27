@@ -1,7 +1,5 @@
 package com.yhy.jakit.starter.dynamic.datasource.jpa.utils;
 
-import com.yhy.jakit.lib.util.constant.Define;
-import com.yhy.jakit.lib.util.core.Assert;
 import com.yhy.jakit.starter.dynamic.datasource.jpa.config.DataSourceConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.boot.MetadataSources;
@@ -13,6 +11,7 @@ import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.hibernate.tool.schema.TargetType;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.Entity;
@@ -49,9 +48,9 @@ public abstract class DBUtils {
     }
 
     public static void updateSchema(DataSourceConfig config) {
-        Assert.notEmpty(config.getUrl(), "url can not be empty");
-        Assert.notEmpty(config.getUsername(), "username can not be empty");
-        Assert.notEmpty(config.getPassword(), "password can not be empty");
+        Assert.hasText(config.getUrl(), "url can not be empty");
+        Assert.hasText(config.getUsername(), "username can not be empty");
+        Assert.hasText(config.getPassword(), "password can not be empty");
 
         if (!StringUtils.hasText(config.getDriver())) {
             config.setDriver(DEF_DRIVER);
@@ -77,7 +76,7 @@ public abstract class DBUtils {
         StandardServiceRegistry registry = new StandardServiceRegistryBuilder().applySettings(settings).build();
         try {
             MetadataSources ms = new MetadataSources(registry);
-            Set<Class<?>> classes = getClassInPackage(Define.BASE_PACKAGE_NAME);
+            Set<Class<?>> classes = getClassInPackage("");
             classes.forEach(ms::addAnnotatedClass);
             MetadataImplementor implementor = (MetadataImplementor) ms.buildMetadata();
             implementor.validate();

@@ -5,7 +5,7 @@ import com.mongodb.client.MongoClient;
 import com.yhy.jakit.starter.dynamic.datasource.mongo.config.MongoDBProperties;
 import com.yhy.jakit.starter.dynamic.datasource.mongo.constant.MongoConstant;
 import com.yhy.jakit.starter.dynamic.datasource.mongo.holder.MongoNameHolder;
-import com.yhy.jakit.core.internal.Lists;
+import com.yhy.jakit.util.internal.Lists;
 import org.springframework.boot.autoconfigure.mongo.MongoClientFactory;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.autoconfigure.mongo.MongoPropertiesClientSettingsBuilderCustomizer;
@@ -41,7 +41,7 @@ public class DynamicMongoDatabaseFactory {
         this.environment = environment;
         MongoNameHolder.set(MongoConstant.DEFAULT_MONGO_NAME);
     }
-    
+
     /**
      * Get current {@link MongoDatabaseFactory} for current thread.
      * <p>

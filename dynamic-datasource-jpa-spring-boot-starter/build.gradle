@@ -170,14 +170,14 @@ publishing {
             def releasesRepoUrl = rootConfig.repository.release
             def snapshotsRepoUrl = rootConfig.repository.snapshot
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-//            credentials {
-//                username = ossrhUsername
-//                password = ossrhPassword
-//            }
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
         }
     }
 }
 
-//signing {
-//    sign publishing.publications.mavenJava
-//}
+signing {
+    sign publishing.publications.mavenJava
+}
