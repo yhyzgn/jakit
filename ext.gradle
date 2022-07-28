@@ -71,4 +71,9 @@ ext {
             version    : '1.0.0',
             description: 'Simple of crypto-spring-boot-starter.'
     ] as LinkedHashMap
+    starterLoggerTracing = [
+            artifact   : 'logger-tracing-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'Tracing logging.'
+    ] as LinkedHashMap
 }

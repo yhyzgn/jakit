@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    <springProperty scope="context" name="projectName" source="spring.application.name" defaultValue="application"/>
+    <springProperty scope="context" name="logger_level" source="logger.level" defaultValue="INFO"/>
+    <springProperty scope="context" name="logger_file_enabled" source="logger.file.enabled" defaultValue="false"/>
+    <springProperty scope="context" name="logger_file_path" source="logger.file.path" defaultValue="./log"/>
+    <springProperty scope="context" name="logger_file_level" source="logger.file.level" defaultValue="INFO"/>
+    <springProperty scope="context" name="logger_kafka_enabled" source="logger.kafka.enabled" defaultValue="false"/>
+    <springProperty scope="context" name="logger_kafka_topic" source="logger.kafka.topic"/>
+    <springProperty scope="context" name="logger_kafka_server" source="logger.kafka.server"/>
+    <springProperty scope="context" name="logger_kafka_async" source="logger.kafka.async" defaultValue="true"/>
+    <springProperty scope="context" name="logger_kafka_level" source="logger.kafka.level" defaultValue="INFO"/>
+    <springProperty scope="context" name="logger_hibernate_enabled" source="logger.hibernate.enabled" defaultValue="false"/>
+    <!-- 日志文件名 -->
+    <property scop="context" name="file_name" value="${projectName}"/>
+    <!-- 日期格式约束 -->
+    <timestamp key="date_pattern" datePattern="yyyyMMdd'T'HHmmss"/>
+
+    <conversionRule conversionWord="ip" converterClass="com.tengyun.saas.lib.util.logback.IPConverter"/>
+
+    <!-- IDEA 中打印彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <!-- 控制台输出 -->
+    <appender name="ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>[%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint}] [%clr(${LOG_LEVEL_PATTERN:-%5p})] [%0(%X{Trace-Id})] %clr([%0.48t]){faint} %clr(%-40.40logger{39}){cyan} %clr(%4.4L){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 按照每天生成日志文件 -->
+    <if condition="${logger_file_enabled}">
+        <then>
+            <appender name="FileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                    <level>${logger_file_level}</level>
+                </filter>
+
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <!--日志文件输出的文件名 -->
+                    <FileNamePattern>${logger_file_path}/${file_name}.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+                    <!-- 日志总保存量为1GB -->
+                    <totalSizeCap>1024MB</totalSizeCap>
+                    <!--日志文件保留天数 -->
+                    <MaxHistory>30</MaxHistory>
+                    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                        <!--文件达到 最大128MB时会被压缩和切割 -->
+                        <maxFileSize>128 MB</maxFileSize>
+                    </timeBasedFileNamingAndTriggeringPolicy>
+                </rollingPolicy>
+                <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+                    <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+                    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [${LOG_LEVEL_PATTERN:-%5p}] [%0(%X{Trace-Id})] [%0.48t] %-40.40logger{39} %4.4L : %m%n</pattern>
+                </encoder>
+                <!--日志文件最大的大小 -->
+                <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <MaxFileSize>10MB</MaxFileSize>
+                </triggeringPolicy>
+            </appender>
+        </then>
+    </if>
+
+    <!-- 上报到Kafka -->
+    <if condition="${logger_kafka_enabled}">
+        <then>
+            <appender name="KafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+                <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                    <level>${logger_kafka_level}</level>
+                </filter>
+                <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                    <providers>
+                        <pattern>
+                            <pattern>
+                                {
+                                "project": "${projectName}",
+                                "tags": "log-%X{Trace-Id}",
+                                "timestamp": "%d{yyyy-MM-dd HH:mm:ss.SSS}",
+                                "log_level": "%level",
+                                "thread": "%thread",
+                                "class_name": "%class",
+                                "line_number": "%line",
+                                "message": "%message",
+                                "stack_trace": "%exception{50}",
+                                "ip":"%ip"
+                                }
+                            </pattern>
+                        </pattern>
+                    </providers>
+                </encoder>
+                <topic>${logger_kafka_topic}</topic>
+                <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy"/>
+                <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy"/>
+                <producerConfig>bootstrap.servers=${logger_kafka_server}</producerConfig>
+                <!-- don't wait for a broker to ack the reception of a batch. -->
+                <producerConfig>acks=0</producerConfig>
+                <!-- wait up to 1000ms and collect log messages before sending them as a batch -->
+                <producerConfig>linger.ms=1000</producerConfig>
+                <!-- even if the producer buffer runs full, do not block the application but start to drop messages -->
+                <producerConfig>max.block.ms=0</producerConfig>
+                <producerConfig>block.on.buffer.full=false</producerConfig>
+            </appender>
+
+            <appender name="AsyncKafkaAppender" class="ch.qos.logback.classic.AsyncAppender">
+                <!-- if neverBlock is set to true, the async appender discards messages when its internal queue is full -->
+                <neverBlock>false</neverBlock>
+                <queueSize>1024</queueSize>
+                <appender-ref ref="KafkaAppender"/>
+            </appender>
+        </then>
+    </if>
+
+    <!-- 1. 本地开发环境，控制台输出 -->
+    <springProfile name="dev">
+        <!-- 日志输出级别 -->
+        <root level="${logger_level}">
+            <appender-ref ref="ConsoleAppender"/>
+            <if condition="${logger_file_enabled}">
+                <then>
+                    <appender-ref ref="FileAppender"/>
+                </then>
+            </if>
+            <if condition="${logger_kafka_enabled}">
+                <then>
+                    <if condition="${logger_kafka_async}">
+                        <then>
+                            <appender-ref ref="AsyncKafkaAppender"/>
+                        </then>
+                        <else>
+                            <appender-ref ref="KafkaAppender"/>
+                        </else>
+                    </if>
+                </then>
+            </if>
+        </root>
+
+        <!-- show parameters for hibernate sql 专为 Hibernate 定制 -->
+        <if condition="${logger_hibernate_enabled}">
+            <then>
+                <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+                <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG"/>
+                <logger name="org.hibernate.SQL" level="DEBUG"/>
+                <logger name="org.hibernate.engine.QueryParameters" level="DEBUG"/>
+                <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG"/>
+            </then>
+        </if>
+        ·
+    </springProfile>
+
+    <!-- 2. 测试环境，控制台输出，文件输出，Kafka输出 -->
+    <springProfile name="test">
+        <!-- 日志输出级别 -->
+        <root level="${logger_level}">
+            <appender-ref ref="ConsoleAppender"/>
+            <if condition="${logger_file_enabled}">
+                <then>
+                    <appender-ref ref="FileAppender"/>
+                </then>
+            </if>
+            <if condition="${logger_kafka_enabled}">
+                <then>
+                    <if condition="${logger_kafka_async}">
+                        <then>
+                            <appender-ref ref="AsyncKafkaAppender"/>
+                        </then>
+                        <else>
+                            <appender-ref ref="KafkaAppender"/>
+                        </else>
+                    </if>
+                </then>
+            </if>
+        </root>
+
+        <!-- show parameters for hibernate sql 专为 Hibernate 定制 -->
+        <if condition="${logger_hibernate_enabled}">
+            <then>
+                <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+                <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG"/>
+                <logger name="org.hibernate.SQL" level="DEBUG"/>
+                <logger name="org.hibernate.engine.QueryParameters" level="DEBUG"/>
+                <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG"/>
+            </then>
+        </if>
+    </springProfile>
+
+    <!-- 3. 生产环境，控制台输出，文件输出，Kafka输出 -->
+    <springProfile name="prod">
+        <!-- 日志输出级别 -->
+        <root level="${logger_level}">
+            <appender-ref ref="ConsoleAppender"/>
+            <if condition="${logger_file_enabled}">
+                <then>
+                    <appender-ref ref="FileAppender"/>
+                </then>
+            </if>
+            <if condition="${logger_kafka_enabled}">
+                <then>
+                    <if condition="${logger_kafka_async}">
+                        <then>
+                            <appender-ref ref="AsyncKafkaAppender"/>
+                        </then>
+                        <else>
+                            <appender-ref ref="KafkaAppender"/>
+                        </else>
+                    </if>
+                </then>
+            </if>
+        </root>
+
+        <!-- show parameters for hibernate sql 专为 Hibernate 定制 -->
+        <if condition="${logger_hibernate_enabled}">
+            <then>
+                <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+                <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG"/>
+                <logger name="org.hibernate.SQL" level="DEBUG"/>
+                <logger name="org.hibernate.engine.QueryParameters" level="DEBUG"/>
+                <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG"/>
+            </then>
+        </if>
+    </springProfile>
+</configuration>

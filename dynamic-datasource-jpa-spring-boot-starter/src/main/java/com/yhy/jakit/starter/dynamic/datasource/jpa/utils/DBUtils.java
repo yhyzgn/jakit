@@ -11,6 +11,7 @@ import org.hibernate.tool.hbm2ddl.SchemaUpdate;
 import org.hibernate.tool.schema.TargetType;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -90,7 +91,11 @@ public abstract class DBUtils {
     }
 
     private static Set<Class<?>> getClassInPackage(String packageName) {
-        Reflections reflections = new Reflections(packageName, Scanners.TypesAnnotated, Scanners.SubTypes);
+        Reflections reflections = new Reflections(
+            new ConfigurationBuilder()
+                .forPackage(packageName)
+                .addScanners(Scanners.TypesAnnotated, Scanners.SubTypes)
+        );
         return reflections.getTypesAnnotatedWith(Entity.class);
     }
 }

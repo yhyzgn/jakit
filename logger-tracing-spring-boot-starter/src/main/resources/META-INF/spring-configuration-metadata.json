@@ -1,0 +1,196 @@
+{
+  "properties": [
+    {
+      "name": "logger.level",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "logger.file.enabled",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "name": "logger.file.path",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "logger.file.level",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "logger.kafka.enabled",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "name": "logger.kafka.topic",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "logger.kafka.server",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "logger.kafka.level",
+      "type": "java.lang.String"
+    },
+    {
+      "name": "logger.kafka.async",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "name": "logger.hibernate.enabled",
+      "type": "java.lang.Boolean"
+    }
+  ],
+  "hints": [
+    {
+      "name": "logger.level",
+      "values": [
+        {
+          "value": "OFF",
+          "description": "OFF Level"
+        },
+        {
+          "value": "ERROR",
+          "description": "ERROR Level"
+        },
+        {
+          "value": "WARN",
+          "description": "WARN Level"
+        },
+        {
+          "value": "INFO",
+          "description": "INFO Level"
+        },
+        {
+          "value": "DEBUG",
+          "description": "DEBUG Level"
+        },
+        {
+          "value": "TRACE",
+          "description": "TRACE Level"
+        },
+        {
+          "value": "ALL",
+          "description": "ALL Level"
+        }
+      ]
+    },
+    {
+      "name": "logger.file.enabled",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enable FileLogger"
+        },
+        {
+          "value": "false",
+          "description": "Disable FileLogger"
+        }
+      ]
+    },
+    {
+      "name": "logger.file.path",
+      "type": "File path of logger files"
+    },
+    {
+      "name": "logger.file.level",
+      "values": [
+        {
+          "value": "OFF",
+          "description": "OFF Level"
+        },
+        {
+          "value": "ERROR",
+          "description": "ERROR Level"
+        },
+        {
+          "value": "WARN",
+          "description": "WARN Level"
+        },
+        {
+          "value": "INFO",
+          "description": "INFO Level"
+        },
+        {
+          "value": "DEBUG",
+          "description": "DEBUG Level"
+        },
+        {
+          "value": "TRACE",
+          "description": "TRACE Level"
+        },
+        {
+          "value": "ALL",
+          "description": "ALL Level"
+        }
+      ]
+    },
+    {
+      "name": "logger.kafka.enabled",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enable KafkaLogger"
+        },
+        {
+          "value": "false",
+          "description": "Disable KafkaLogger"
+        }
+      ]
+    },
+    {
+      "name": "logger.kafka.server",
+      "type": "Address of your kafka server, eg. localhost:9092"
+    },
+    {
+      "name": "logger.kafka.topic",
+      "type": "Topic of your kafka channel"
+    },
+    {
+      "name": "logger.kafka.level",
+      "values": [
+        {
+          "value": "OFF",
+          "description": "OFF Level"
+        },
+        {
+          "value": "ERROR",
+          "description": "ERROR Level"
+        },
+        {
+          "value": "WARN",
+          "description": "WARN Level"
+        },
+        {
+          "value": "INFO",
+          "description": "INFO Level"
+        },
+        {
+          "value": "DEBUG",
+          "description": "DEBUG Level"
+        },
+        {
+          "value": "TRACE",
+          "description": "TRACE Level"
+        },
+        {
+          "value": "ALL",
+          "description": "ALL Level"
+        }
+      ]
+    },
+    {
+      "name": "logger.hibernate.enabled",
+      "values": [
+        {
+          "value": "true",
+          "description": "Enable print log of hibernate"
+        },
+        {
+          "value": "false",
+          "description": "Disable print log of hibernate"
+        }
+      ]
+    }
+  ]
+}
