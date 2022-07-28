@@ -1,6 +1,6 @@
 # `crypto-spring-boot-starter`
 
-![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/crypto-spring-boot-starter?color=brightgreen&label=crypto-spring-boot-starter&logo=gradle&logoColor=orange&style=flat-square)
+![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/crypto-spring-boot-starter?color=3eaf7c&label=crypto-spring-boot-starter&logo=apachemaven&logoColor=c71a36&style=flat-square)
 
 > `jakit` 接口加密传输快速开发库
 

@@ -1,7 +1,6 @@
 # `dynamic-datasource-mybatis-spring-boot-starter`
 
-![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/dynamic-datasource-mybatis-spring-boot-starter?color=brightgreen&label=dynamic-datasource-mybatis-spring-boot-starter&logo=gradle&logoColor=orange&style=flat-square)
-
+![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/dynamic-datasource-mybatis-spring-boot-starter?color=blueviolet&label=dynamic-datasource-mybatis-spring-boot-starter&logo=apachemaven&logoColor=c71a36&style=flat-square)
 > 动态添加和切换数据源
 
 

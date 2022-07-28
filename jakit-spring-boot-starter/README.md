@@ -1,6 +1,6 @@
 # `jakit-spring-boot-starter`
 
-![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/jakit-spring-boot-starter?color=brightgreen&label=jakit-spring-boot-starter&logo=gradle&logoColor=orange&style=flat-square)
+![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/jakit-spring-boot-starter?color=13aa52&label=jakit-spring-boot-starter&logo=apachemaven&logoColor=c71a36&style=flat-square)
 
 > `jakit` + `SpringBoot` 快速开发组件库
 

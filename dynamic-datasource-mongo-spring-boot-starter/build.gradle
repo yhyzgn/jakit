@@ -36,22 +36,8 @@ test {
     useJUnitPlatform()
 }
 
-task replaceVersion() {
-    def version = rootProject.starterMongo.version.replace('-', '--')
-    ['../README.md', './README.md'].each {
-        println("Resetting the version[${version}] of ${rootConfig.starterMongo.artifact} in ${it} file.")
-        ant.replaceregexp(
-                file: "${it}",
-                match: "dynamic--datasource--jpa--spring--boot--starter-(.+)?-brightgreen",
-                replace: "dynamic--datasource--jpa--spring--boot--starter-${version}-brightgreen",
-                flags: 'g',
-                byline: "true"
-        )
-    }
-}
-
 // publish 前先 clean
-compileJava.dependsOn(clean, replaceVersion)
+compileJava.dependsOn(clean)
 publish.dependsOn(publishToMavenLocal)
 
 task sourceJar(type: Jar) {

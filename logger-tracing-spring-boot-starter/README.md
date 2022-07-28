@@ -1,7 +1,6 @@
 # `logger-tracing-spring-boot-starter`
 
-![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/logger-tracing-spring-boot-starter?color=brightgreen&label=logger-tracing-spring-boot-starter&logo=gradle&logoColor=orange&style=flat-square)
-
+![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/logger-tracing-spring-boot-starter?color=orange&label=logger-tracing-spring-boot-starter&logo=apachemaven&logoColor=c71a36&style=flat-square)
 > `jakit` 日志输出快速开发库
 
 

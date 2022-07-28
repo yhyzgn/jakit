@@ -1,6 +1,6 @@
 # `operation-logging-spring`
 
-![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/operation-logging-spring?color=brightgreen&label=operation-logging-spring&logo=gradle&logoColor=orange&style=flat-square)
+![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/operation-logging-spring?color=yellowgreen&label=operation-logging-spring&logo=apachemaven&logoColor=c71a36&style=flat-square)
 
 > `jakit` 数据库操作日志输出快速开发库
 

@@ -1,7 +1,6 @@
 # `operation-logging-mybatis-spring-boot-starter`
 
-![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/operation-logging-mybatis-spring-boot-starter?color=brightgreen&label=operation-logging-mybatis-spring-boot-starter&logo=gradle&logoColor=orange&style=flat-square)
-
+![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/operation-logging-mybatis-spring-boot-starter?color=yellowgreen&label=operation-logging-mybatis-spring-boot-starter&logo=apachemaven&logoColor=c71a36&style=flat-square)
 > `jakit` 数据库操作日志输出快速开发库
 >
 > `mybatis` 实现
