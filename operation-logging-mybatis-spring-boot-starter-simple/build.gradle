@@ -1,0 +1,52 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.2'
+    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'java'
+}
+
+apply from: "../ext.gradle"
+
+def rootConfig = rootProject.ext
+
+group rootConfig.group
+version rootConfig.simpleOprLoggingMybatis.version
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+bootJar {
+    classifier 'boot'
+    manifest {
+        attributes 'Main-Class': 'com.yhy.jakit.simple.starter.logging.Application'
+    }
+}
+
+jar {
+    enabled false
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'mysql:mysql-connector-java'
+    implementation project(':util')
+    implementation project(':simple-support')
+    implementation project(':jakit-spring-boot-starter')
+    implementation project(':operation-logging-mybatis-spring-boot-starter')
+    implementation 'org.burningwave:core:12.53.0'
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.2'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -76,4 +76,29 @@ ext {
             version    : '1.0.0',
             description: 'Tracing logging.'
     ] as LinkedHashMap
+    springOprLogging = [
+            artifact   : 'operation-logging-spring',
+            version    : '1.0.0',
+            description: 'Some operation logging logger.'
+    ] as LinkedHashMap
+    starterOprLoggingJpa = [
+            artifact   : 'operation-logging-jpa-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'Some operation logging logger.'
+    ] as LinkedHashMap
+    simpleOprLoggingJpa = [
+            artifact   : 'operation-logging-jpa-spring-boot-starter-simple',
+            version    : '1.0.0',
+            description: 'Simple of operation-logging-spring-boot-starter.'
+    ] as LinkedHashMap
+    starterOprLoggingMybatis = [
+            artifact   : 'operation-logging-mybatis-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'Some operation logging logger.'
+    ] as LinkedHashMap
+    simpleOprLoggingMybatis = [
+            artifact   : 'operation-logging-mybatis-spring-boot-starter-simple',
+            version    : '1.0.0',
+            description: 'Simple of operation-logging-spring-boot-starter.'
+    ] as LinkedHashMap
 }

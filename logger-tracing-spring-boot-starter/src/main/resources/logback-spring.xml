@@ -16,7 +16,7 @@
     <!-- 日期格式约束 -->
     <timestamp key="date_pattern" datePattern="yyyyMMdd'T'HHmmss"/>
 
-    <conversionRule conversionWord="ip" converterClass="com.tengyun.saas.lib.util.logback.IPConverter"/>
+    <conversionRule conversionWord="ip" converterClass="com.yhy.jakit.util.logback.IPConverter"/>
 
     <!-- IDEA 中打印彩色日志依赖的渲染类 -->
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>

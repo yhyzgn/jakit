@@ -16,7 +16,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 配合 {@link com.tengyun.saas.starter.component.filter.TraceFilter} 使用
+ * 配合 {@link com.yhy.jakit.starter.filter.TraceFilter} 使用
  * <p>
  * Created on 2021-06-04 16:54
  *

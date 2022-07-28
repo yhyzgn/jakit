@@ -13,7 +13,7 @@ apply from: "../ext.gradle"
 def rootConfig = rootProject.ext
 
 group rootConfig.group
-version rootConfig.starter.version
+version rootConfig.starterOprLoggingJpa.version
 
 configurations {
     compileOnly {
@@ -23,15 +23,10 @@ configurations {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
-    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
-    compileOnly 'org.springframework.boot:spring-boot-starter-data-redis'
-    compileOnly 'org.springframework.boot:spring-boot-starter-aop'
-    compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    api project(':operation-logging-spring')
     compileOnly 'org.projectlombok:lombok'
-    compileOnly project(':dynamic-datasource-redis-spring-boot-starter')
-    api project(':util')
-
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -39,6 +34,19 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+compileJava.dependsOn(clean)
+publish.dependsOn(publishToMavenLocal)
+
+task sourceJar(type: Jar) {
+    classifier "sources"
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc
 }
 
 tasks.withType(JavaCompile) {
@@ -51,9 +59,6 @@ tasks.withType(JavaCompile) {
 tasks.withType(GenerateModuleMetadata) {
     enabled = false
 }
-
-compileJava.dependsOn(clean)
-publish.dependsOn(publishToMavenLocal)
 
 // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
 jar {
@@ -97,29 +102,6 @@ javadoc {
     }
 }
 
-task sourceJar(type: Jar) {
-    classifier "sources"
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier "javadoc"
-    from javadoc
-}
-
-javadoc {
-    afterEvaluate {
-        configure(options) {
-            encoding "UTF-8"
-            charSet 'UTF-8'
-            author true
-            version true
-            failOnError false
-            links "https://docs.oracle.com/javase/8/docs/api"
-        }
-    }
-}
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -131,13 +113,13 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = rootConfig.group
-            artifactId = rootConfig.starter.artifact
-            version = rootConfig.starter.version
+            artifactId = rootConfig.starterOprLoggingJpa.artifact
+            version = rootConfig.starterOprLoggingJpa.version
             from components.java
 
             pom {
-                name = rootConfig.starter.artifact
-                description = rootConfig.starter.description
+                name = rootConfig.starterOprLoggingJpa.artifact
+                description = rootConfig.starterOprLoggingJpa.description
                 url = "https://${rootConfig.url}"
                 licenses {
                     license {
@@ -149,8 +131,8 @@ publishing {
                 }
                 developers {
                     developer {
-                        name = 'yhy'
-                        email = 'yhy@gmail.com'
+                        name = 'yhyzgn'
+                        email = 'yhyzgn@gmail.com'
                         url = "https://github.com/yhyzgn/"
                     }
                 }
