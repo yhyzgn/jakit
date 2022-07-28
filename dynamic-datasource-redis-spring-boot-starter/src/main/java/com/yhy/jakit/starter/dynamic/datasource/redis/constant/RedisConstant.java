@@ -12,5 +12,5 @@ public interface RedisConstant {
     /**
      * The default redis datasource name.
      */
-    String DEFAULT_REDIS_NAME = "constant.redis.datasource.dynamic.starter.com.yhy.jakit.RedisConstant#default-redis-name";
+    String DEFAULT_REDIS_NAME = "com.yhy.jakit.starter.dynamic.datasource.redis.constant.RedisConstant#default-redis-name";
 }

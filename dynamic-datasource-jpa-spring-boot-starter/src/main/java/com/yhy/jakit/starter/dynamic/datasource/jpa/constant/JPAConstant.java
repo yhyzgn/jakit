@@ -12,5 +12,5 @@ public interface JPAConstant {
     /**
      * The default jpa datasource name.
      */
-    String DEFAULT_JPA_NAME = "constant.jpa.datasource.dynamic.starter.com.yhy.jakit.JPAConstant#default-jpa-name";
+    String DEFAULT_JPA_NAME = "com.yhy.jakit.starter.dynamic.datasource.jpa.constant.JPAConstant#default-jpa-name";
 }

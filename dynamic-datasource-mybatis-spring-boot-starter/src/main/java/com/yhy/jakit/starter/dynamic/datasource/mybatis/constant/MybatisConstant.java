@@ -12,5 +12,5 @@ public interface MybatisConstant {
     /**
      * The default mybatis datasource name.
      */
-    String DEFAULT_MYBATIS_NAME = "constant.mybatis.datasource.dynamic.starter.com.yhy.jakit.MybatisConstant#default-mybatis-name";
+    String DEFAULT_MYBATIS_NAME = "com.yhy.jakit.starter.dynamic.datasource.mybatis.constant.MybatisConstant#default-mybatis-name";
 }
