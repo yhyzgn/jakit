@@ -1,6 +1,6 @@
 # `jakit`
 
-![jdk](https://img.shields.io/badge/openjdk-1.8%2B-red?logo=openjdk&logoColor=red&style=flat-square) ![spring-boot](https://img.shields.io/badge/spring--boot-2.5.0+-brightgreen?logo=spring&logoColor=brightgreen&style=flat-square)
+![jdk](https://img.shields.io/badge/openjdk-1.8%2B-red?logo=openjdk&logoColor=red&style=flat-square) ![spring-boot](https://img.shields.io/badge/spring--boot-2.5.0+-brightgreen?logo=springboot&logoColor=brightgreen&style=flat-square)
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.yhyzgn.jakit/util?color=green&label=util&logo=apachemaven&logoColor=c71a36&style=flat-square)](./util/README.md) 
 

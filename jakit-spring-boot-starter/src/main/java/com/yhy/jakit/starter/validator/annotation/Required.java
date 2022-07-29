@@ -1,9 +1,9 @@
 package com.yhy.jakit.starter.validator.annotation;
 
 import com.yhy.jakit.starter.validator.constraint.RequiredConstraint;
-import jakarta.validation.Constraint;
-import jakarta.validation.Payload;
 
+import javax.validation.Constraint;
+import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /**

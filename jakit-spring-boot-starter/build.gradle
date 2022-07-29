@@ -13,7 +13,7 @@ apply from: "../ext.gradle"
 def rootConfig = rootProject.ext
 
 group rootConfig.group
-version rootConfig.starter.version
+version rootConfig.starterJakit.version
 
 configurations {
     compileOnly {
@@ -24,12 +24,13 @@ configurations {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
-    implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-redis'
-    compileOnly 'org.springframework.boot:spring-boot-starter-aop'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
     compileOnly 'org.projectlombok:lombok'
     compileOnly project(':dynamic-datasource-redis-spring-boot-starter')
+
+    api 'jakarta.validation:jakarta.validation-api'
+    api 'org.springframework.boot:spring-boot-starter-aop'
     api project(':util')
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -131,13 +132,13 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = rootConfig.group
-            artifactId = rootConfig.starter.artifact
-            version = rootConfig.starter.version
+            artifactId = rootConfig.starterJakit.artifact
+            version = rootConfig.starterJakit.version
             from components.java
 
             pom {
-                name = rootConfig.starter.artifact
-                description = rootConfig.starter.description
+                name = rootConfig.starterJakit.artifact
+                description = rootConfig.starterJakit.description
                 url = "https://${rootConfig.url}"
                 licenses {
                     license {
@@ -170,14 +171,14 @@ publishing {
             def releasesRepoUrl = rootConfig.repository.release
             def snapshotsRepoUrl = rootConfig.repository.snapshot
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            credentials {
-                username = ossrhUsername
-                password = ossrhPassword
-            }
+//            credentials {
+//                username = ossrhUsername
+//                password = ossrhPassword
+//            }
         }
     }
 }
 
-signing {
-    sign publishing.publications.mavenJava
-}
+//signing {
+//    sign publishing.publications.mavenJava
+//}

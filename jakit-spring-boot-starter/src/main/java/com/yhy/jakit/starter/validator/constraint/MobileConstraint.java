@@ -1,9 +1,9 @@
 package com.yhy.jakit.starter.validator.constraint;
 
 import com.yhy.jakit.starter.validator.annotation.Mobile;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
 /**

@@ -16,10 +16,15 @@ ext {
             version    : '1.0.0',
             description: 'Some simple support library components.'
     ] as LinkedHashMap
-    starter = [
+    starterJakit = [
             artifact   : 'jakit-spring-boot-starter',
-            version    : '1.0.1',
+            version    : '1.0.2',
             description: 'SpringBoot starter.'
+    ] as LinkedHashMap
+    simpleJakit = [
+            artifact   : 'jakit-spring-boot-starter-simple',
+            version    : '1.0.0',
+            description: 'Simple of jakit-spring-boot-starter.'
     ] as LinkedHashMap
     starterJpa = [
             artifact   : 'dynamic-datasource-jpa-spring-boot-starter',

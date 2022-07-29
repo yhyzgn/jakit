@@ -1,0 +1,11 @@
+server:
+  port: 8888
+  shutdown: graceful
+
+spring:
+  redis:
+    host: localhost
+    password: root
+    port: 6379
+    database: 4
+    key-prefix: jakit

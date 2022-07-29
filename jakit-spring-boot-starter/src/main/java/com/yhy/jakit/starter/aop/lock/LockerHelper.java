@@ -1,11 +1,9 @@
 package com.yhy.jakit.starter.aop.lock;
 
-import com.yhy.jakit.starter.dynamic.datasource.redis.dynamic.DynamicStringRedisTemplate;
 import com.yhy.jakit.starter.helper.RedisHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -20,11 +18,11 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 @Component
-@AutoConfigureAfter(DynamicStringRedisTemplate.class)
-@ConditionalOnClass({RedisConnectionFactory.class, DynamicStringRedisTemplate.class})
+@AutoConfigureAfter(RedisHelper.class)
+@ConditionalOnBean(RedisHelper.class)
 public class LockerHelper {
     @Autowired
-    private DynamicStringRedisTemplate dynamicTemplate;
+    private RedisHelper redisHelper;
 
     /**
      * 申请一个分布式锁
@@ -41,7 +39,7 @@ public class LockerHelper {
      */
     public boolean tryLock(String key, Object value, long expiry, TimeUnit expiryUnit, int retry, long interval, TimeUnit intervalUnit) throws InterruptedException {
         do {
-            Boolean result = RedisHelper.currentTemplate(dynamicTemplate).opsForValue().setIfAbsent(withPrefix(key), value.toString(), expiry, expiryUnit);
+            Boolean result = redisHelper.template().opsForValue().setIfAbsent(withPrefix(key), value.toString(), expiry, expiryUnit);
             if (null != result && result) {
                 return true;
             }
@@ -62,7 +60,7 @@ public class LockerHelper {
      * @return 是否成功
      */
     public boolean unlock(String key) {
-        Boolean result = RedisHelper.currentTemplate(dynamicTemplate).delete(withPrefix(key));
+        Boolean result = redisHelper.template().delete(withPrefix(key));
         return null != result && result;
     }
 
@@ -73,6 +71,6 @@ public class LockerHelper {
      * @return 带前缀的 key
      */
     private String withPrefix(String key) {
-        return RedisHelper.withPrefix(dynamicTemplate.currentKeyPrefix(), key, original -> original);
+        return RedisHelper.withPrefix(redisHelper.keyPrefix(), key, original -> original);
     }
 }

@@ -1,9 +1,10 @@
 package com.yhy.jakit.starter.validator.constraint;
 
 import com.yhy.jakit.starter.validator.annotation.Required;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.util.StringUtils;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 /**
  * 必须参数校验器

@@ -65,6 +65,18 @@ public class TraceAspect {
         // 响应是的 Span-Chain 得在这里添加
         HttpServletResponse response = attributes.getResponse();
         if (null != response) {
+            String traceId = response.getHeader(Define.TRACE_ID);
+            if (!StringUtils.hasText(traceId)) {
+                traceId = Trace.get(Define.TRACE_ID);
+            }
+            response.setHeader(Define.TRACE_ID, traceId);
+
+            String spanId = response.getHeader(Define.SPAN_ID);
+            if (!StringUtils.hasText(spanId)) {
+                spanId = Trace.get(Define.SPAN_ID);
+            }
+            response.setHeader(Define.SPAN_ID, spanId);
+
             String spanChain = Trace.get(Define.SPAN_CHAIN);
             if (StringUtils.hasText(spanChain)) {
                 response.setHeader(Define.SPAN_CHAIN, spanChain);

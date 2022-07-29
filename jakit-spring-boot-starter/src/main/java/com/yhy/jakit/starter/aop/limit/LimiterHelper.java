@@ -1,14 +1,12 @@
 package com.yhy.jakit.starter.aop.limit;
 
-import com.yhy.jakit.starter.dynamic.datasource.redis.dynamic.DynamicStringRedisTemplate;
 import com.yhy.jakit.starter.helper.RedisHelper;
 import com.yhy.jakit.util.internal.Maps;
 import com.yhy.jakit.util.system.SystemClock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -30,11 +28,9 @@ import java.util.Objects;
  * @since 1.0.0
  */
 @Component
-@AutoConfigureAfter(DynamicStringRedisTemplate.class)
-@ConditionalOnClass({RedisConnectionFactory.class, DynamicStringRedisTemplate.class})
+@AutoConfigureAfter(RedisHelper.class)
+@ConditionalOnBean(RedisHelper.class)
 public class LimiterHelper {
-    @Autowired
-    private DynamicStringRedisTemplate dynamicTemplate;
     @Autowired
     private RedisHelper redisHelper;
 
@@ -77,7 +73,7 @@ public class LimiterHelper {
         long now = SystemClock.now() / 1000L;
         key = withPrefix(key);
 
-        StringRedisTemplate template = RedisHelper.currentTemplate(dynamicTemplate);
+        StringRedisTemplate template = redisHelper.template();
         HashOperations<String, Object, Object> ops = template.opsForHash();
 
         // 1、判断令牌桶是否存在
@@ -131,6 +127,6 @@ public class LimiterHelper {
      * @return 带前缀的 key
      */
     private String withPrefix(String key) {
-        return RedisHelper.withPrefix(dynamicTemplate.currentKeyPrefix(), key, original -> original);
+        return RedisHelper.withPrefix(redisHelper.keyPrefix(), key, original -> original);
     }
 }

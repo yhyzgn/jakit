@@ -1,20 +1,13 @@
 package com.yhy.jakit.starter.helper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.yhy.jakit.starter.dynamic.datasource.redis.dynamic.DynamicStringRedisTemplate;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
@@ -29,12 +22,7 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  * @since 1.0.0
  */
-@Component
-@AutoConfigureAfter(DynamicStringRedisTemplate.class)
-@ConditionalOnClass({RedisConnectionFactory.class, DynamicStringRedisTemplate.class})
-public class RedisHelper {
-    @Autowired
-    private DynamicStringRedisTemplate dynamicTemplate;
+public abstract class RedisHelper {
     @Autowired
     private JsonHelper jsonHelper;
     @Autowired(required = false)
@@ -108,7 +96,7 @@ public class RedisHelper {
     public void set(@NonNull String key, @NonNull String value, KeyPrefixAction action) {
         String redisKey = withPrefix(key, action);
         String original = getAsString(key, action);
-        currentTemplate(dynamicTemplate).opsForValue().set(redisKey, value);
+        template().opsForValue().set(redisKey, value);
         // 处理监听事件
         if (null != listeners) {
             listeners.forEach(lt -> {
@@ -143,7 +131,7 @@ public class RedisHelper {
     public void set(@NonNull String key, @NonNull String value, @NonNull Duration timeout, KeyPrefixAction action) {
         String redisKey = withPrefix(key, action);
         String original = getAsString(key, action);
-        currentTemplate(dynamicTemplate).opsForValue().set(redisKey, value, timeout);
+        template().opsForValue().set(redisKey, value, timeout);
         // 处理监听事件
         if (null != listeners) {
             listeners.forEach(lt -> {
@@ -331,7 +319,7 @@ public class RedisHelper {
      * @return 过期时间
      */
     public long getExpire(@NonNull String key, KeyPrefixAction action) {
-        return Optional.ofNullable(currentTemplate(dynamicTemplate).getExpire(withPrefix(key, action), TimeUnit.SECONDS)).orElse(-1L);
+        return Optional.ofNullable(template().getExpire(withPrefix(key, action), TimeUnit.SECONDS)).orElse(-1L);
     }
 
     /**
@@ -401,7 +389,7 @@ public class RedisHelper {
             return false;
         }
         List<String> redisKeys = Arrays.stream(keys).map(item -> withPrefix(item, action)).collect(Collectors.toList());
-        Long result = currentTemplate(dynamicTemplate).delete(redisKeys);
+        Long result = template().delete(redisKeys);
         boolean successful = null != result && result == keys.length;
         if (null != listeners) {
             listeners.forEach(lt -> {
@@ -429,7 +417,7 @@ public class RedisHelper {
      * @return 是否存在
      */
     public boolean exists(@NonNull String key, KeyPrefixAction action) {
-        Boolean result = currentTemplate(dynamicTemplate).hasKey(withPrefix(key, action));
+        Boolean result = template().hasKey(withPrefix(key, action));
         return null != result && result;
     }
 
@@ -454,7 +442,7 @@ public class RedisHelper {
      */
     public boolean expire(@NonNull String key, @NonNull Duration timeout, KeyPrefixAction action) {
         String redisKey = withPrefix(key, action);
-        Boolean result = currentTemplate(dynamicTemplate).boundValueOps(redisKey).expire(timeout);
+        Boolean result = template().boundValueOps(redisKey).expire(timeout);
         boolean successful = null != result && result;
         if (null != listeners) {
             listeners.forEach(lt -> {
@@ -484,7 +472,7 @@ public class RedisHelper {
     public void rename(String originalKey, String newlyKey, KeyPrefixAction action) {
         String ognKey = withPrefix(originalKey, action);
         String nwlKey = withPrefix(newlyKey, action);
-        currentTemplate(dynamicTemplate).boundValueOps(ognKey).rename(nwlKey);
+        template().boundValueOps(ognKey).rename(nwlKey);
         if (null != listeners) {
             listeners.forEach(lt -> {
                 lt.rename(ognKey, nwlKey);
@@ -514,7 +502,7 @@ public class RedisHelper {
     public <T> void publish(String channel, T message, KeyPrefixAction action) {
         String redisKey = withPrefix(channel, action);
         String value = message instanceof String ? (String) message : jsonHelper.toJson(message);
-        currentTemplate(dynamicTemplate).convertAndSend(redisKey, value);
+        template().convertAndSend(redisKey, value);
         if (null != listeners) {
             listeners.forEach(lt -> {
                 lt.publish(redisKey, value);
@@ -532,7 +520,7 @@ public class RedisHelper {
      * @return 结果
      */
     public <T> T script(RedisScript<T> script, List<String> keys, Object... args) {
-        return currentTemplate(dynamicTemplate).execute(script, keys, args);
+        return template().execute(script, keys, args);
     }
 
     /**
@@ -558,7 +546,7 @@ public class RedisHelper {
         if (null == resultSerializer) {
             resultSerializer = RedisSerializer.string();
         }
-        return currentTemplate(dynamicTemplate).executePipelined(action, resultSerializer);
+        return template().executePipelined(action, resultSerializer);
     }
 
     /**
@@ -579,7 +567,7 @@ public class RedisHelper {
      * @return keys
      */
     public Set<String> keys(String pattern, KeyPrefixAction action) {
-        return currentTemplate(dynamicTemplate).keys(withPrefix(pattern, action));
+        return template().keys(withPrefix(pattern, action));
     }
 
     /**
@@ -605,7 +593,7 @@ public class RedisHelper {
      */
     public Set<String> keysWithoutPrefix(String pattern, KeyPrefixAction action) {
         Set<String> keys = keys(withPrefix(pattern, action));
-        return keys.stream().map(key -> key.replace(dynamicTemplate.currentKeyPrefix() + ":", "")).collect(Collectors.toSet());
+        return keys.stream().map(key -> key.replace(keyPrefix() + ":", "")).collect(Collectors.toSet());
     }
 
     /**
@@ -615,7 +603,7 @@ public class RedisHelper {
      * @return 值
      */
     private String getAsString(String key, KeyPrefixAction action) {
-        return currentTemplate(dynamicTemplate).opsForValue().get(withPrefix(key, action));
+        return template().opsForValue().get(withPrefix(key, action));
     }
 
     /**
@@ -625,7 +613,7 @@ public class RedisHelper {
      * @return 带前缀的 key
      */
     private String withPrefix(String key, KeyPrefixAction action) {
-        return withPrefix(dynamicTemplate.currentKeyPrefix(), key, action);
+        return withPrefix(keyPrefix(), key, action);
     }
 
     /**
@@ -634,12 +622,12 @@ public class RedisHelper {
      * @param dynamicTemplate 动态数据源
      * @return 当前 StringRedisTemplate 实例
      */
-    @NotNull
-    public static StringRedisTemplate currentTemplate(DynamicStringRedisTemplate dynamicTemplate) {
-        StringRedisTemplate template = dynamicTemplate.current();
-        Assert.notNull(template, "Illegal instance of StringRedisTemplate got from DynamicStringRedisTemplate.");
-        return template;
-    }
+    // @NotNull
+    // public static StringRedisTemplate currentTemplate(DynamicStringRedisTemplate dynamicTemplate) {
+    //     StringRedisTemplate template = dynamicTemplate.current();
+    //     Assert.notNull(template, "Illegal instance of StringRedisTemplate got from DynamicStringRedisTemplate.");
+    //     return template;
+    // }
 
     /**
      * 拼接 redis key 前缀
@@ -663,6 +651,10 @@ public class RedisHelper {
         }
         return prefix + key;
     }
+
+    public abstract StringRedisTemplate template();
+
+    public abstract String keyPrefix();
 
     /**
      * key 前缀操作器
