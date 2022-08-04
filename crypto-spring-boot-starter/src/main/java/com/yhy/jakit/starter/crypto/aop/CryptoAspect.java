@@ -67,7 +67,7 @@ public class CryptoAspect {
     public Object before(ProceedingJoinPoint point) throws Throwable {
         Object that = point.getTarget();
         Signature sig = point.getSignature();
-        if (!(sig instanceof MethodSignature) || !that.getClass().getPackage().getName().startsWith(properties.getBasePackage())) {
+        if (!(sig instanceof MethodSignature) || properties.getBasePackages().stream().anyMatch(it -> !that.getClass().getPackage().getName().startsWith(it))) {
             return point.proceed();
         }
         MethodSignature mSig = (MethodSignature) sig;

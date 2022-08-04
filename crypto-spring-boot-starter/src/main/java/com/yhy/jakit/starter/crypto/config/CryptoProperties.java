@@ -13,6 +13,7 @@ import com.yhy.jakit.starter.crypto.component.enums.Algorithm;
 import com.yhy.jakit.starter.crypto.component.enums.Format;
 import com.yhy.jakit.starter.crypto.component.enums.Padding;
 import com.yhy.jakit.starter.crypto.exception.UnSupportedCryptAlgorithmException;
+import com.yhy.jakit.util.internal.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created on 2021-05-31 9:34
@@ -42,7 +44,7 @@ public class CryptoProperties implements InitializingBean, Serializable {
     /**
      * Base package name
      */
-    private String basePackage;
+    private List<String> basePackages;
 
     /**
      * Some internal algorithm
@@ -146,7 +148,9 @@ public class CryptoProperties implements InitializingBean, Serializable {
         }
 
         // 设置一些默认值
-        basePackage = null == basePackage ? "" : basePackage;
+        if (null == basePackages || basePackages.isEmpty()) {
+            basePackages = Lists.of("");
+        }
         mode = null == mode ? Mode.ECB : mode;
         padding = null == padding ? Padding.PKCS5 : padding;
         format = null == format ? Format.BASE64URL : format;

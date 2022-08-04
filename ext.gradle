@@ -68,7 +68,7 @@ ext {
     ] as LinkedHashMap
     starterCrypto = [
             artifact   : 'crypto-spring-boot-starter',
-            version    : '1.0.0',
+            version    : '1.0.1',
             description: 'Some algorithm cipher.'
     ] as LinkedHashMap
     simpleCrypto = [
