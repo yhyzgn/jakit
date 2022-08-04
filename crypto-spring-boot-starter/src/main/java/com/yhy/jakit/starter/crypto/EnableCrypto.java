@@ -1,7 +1,6 @@
 package com.yhy.jakit.starter.crypto;
 
 import org.springframework.context.annotation.Import;
-import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
 
