@@ -21,15 +21,15 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
     implementation 'org.projectlombok:lombok:1.18.24'
 
-    api 'com.alibaba:transmittable-thread-local:2.13.0-Beta1'
+    api 'com.alibaba:transmittable-thread-local:2.13.2'
     api 'com.google.code.gson:gson:2.9.0'
     api 'com.google.guava:guava:31.1-jre'
     api 'org.jetbrains:annotations:23.0.0'
     api 'cn.hutool:hutool-all:5.8.3'
 
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
 }
 
 test {
