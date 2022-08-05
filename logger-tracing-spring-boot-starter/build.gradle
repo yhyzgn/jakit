@@ -24,9 +24,10 @@ configurations {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+    api 'org.codehaus.janino:janino'
     api project(':util')
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly 'org.projectlombok:lombokrootConfig.starterJakit'
+    annotationProcessor 'org.projectlombok:lombokrootConfig.starterJakit'
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -39,6 +40,7 @@ test {
 // compile 前先 clean
 compileJava.dependsOn(clean)
 publish.dependsOn(publishToMavenLocal)
+processResources.exclude('**/rebel.xml')
 
 task sourceJar(type: Jar) {
     classifier "sources"

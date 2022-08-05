@@ -8,7 +8,7 @@ ext {
     ] as LinkedHashMap
     util = [
             artifact   : 'util',
-            version    : '1.0.1',
+            version    : '1.0.2',
             description: 'Some util components.'
     ] as LinkedHashMap
     simpleSupport = [
@@ -18,7 +18,7 @@ ext {
     ] as LinkedHashMap
     starterJakit = [
             artifact   : 'jakit-spring-boot-starter',
-            version    : '1.0.2',
+            version    : '1.0.3',
             description: 'SpringBoot starter.'
     ] as LinkedHashMap
     simpleJakit = [
@@ -28,7 +28,7 @@ ext {
     ] as LinkedHashMap
     starterJpa = [
             artifact   : 'dynamic-datasource-jpa-spring-boot-starter',
-            version    : '1.0.1',
+            version    : '1.0.2',
             description: 'Dynamic datasource for jpa.'
     ] as LinkedHashMap
     simpleJpa = [
@@ -38,7 +38,7 @@ ext {
     ] as LinkedHashMap
     starterMybatis = [
             artifact   : 'dynamic-datasource-mybatis-spring-boot-starter',
-            version    : '1.0.1',
+            version    : '1.0.2',
             description: 'Dynamic datasource for mybatis.'
     ] as LinkedHashMap
     simpleMybatis = [
@@ -48,7 +48,7 @@ ext {
     ] as LinkedHashMap
     starterRedis = [
             artifact   : 'dynamic-datasource-redis-spring-boot-starter',
-            version    : '1.0.1',
+            version    : '1.0.2',
             description: 'Dynamic datasource for redis template and connection factory.'
     ] as LinkedHashMap
     simpleRedis = [
@@ -58,7 +58,7 @@ ext {
     ] as LinkedHashMap
     starterMongo = [
             artifact   : 'dynamic-datasource-mongo-spring-boot-starter',
-            version    : '1.0.1',
+            version    : '1.0.2',
             description: 'Dynamic datasource for mongo template and connection factory.'
     ] as LinkedHashMap
     simpleMongo = [
@@ -78,17 +78,17 @@ ext {
     ] as LinkedHashMap
     starterLoggerTracing = [
             artifact   : 'logger-tracing-spring-boot-starter',
-            version    : '1.0.0',
+            version    : '1.0.1',
             description: 'Tracing logging.'
     ] as LinkedHashMap
     springOprLogging = [
             artifact   : 'operation-logging-spring',
-            version    : '1.0.0',
+            version    : '1.0.1',
             description: 'Some operation logging logger.'
     ] as LinkedHashMap
     starterOprLoggingJpa = [
             artifact   : 'operation-logging-jpa-spring-boot-starter',
-            version    : '1.0.0',
+            version    : '1.0.1',
             description: 'Some operation logging logger.'
     ] as LinkedHashMap
     simpleOprLoggingJpa = [
@@ -98,7 +98,7 @@ ext {
     ] as LinkedHashMap
     starterOprLoggingMybatis = [
             artifact   : 'operation-logging-mybatis-spring-boot-starter',
-            version    : '1.0.0',
+            version    : '1.0.1',
             description: 'Some operation logging logger.'
     ] as LinkedHashMap
     simpleOprLoggingMybatis = [

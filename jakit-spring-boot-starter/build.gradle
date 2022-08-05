@@ -31,6 +31,7 @@ dependencies {
 
     api 'jakarta.validation:jakarta.validation-api'
     api 'org.springframework.boot:spring-boot-starter-aop'
+    api 'org.springframework.boot:spring-boot-starter-validation'
     api project(':util')
 
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
@@ -55,6 +56,7 @@ tasks.withType(GenerateModuleMetadata) {
 
 compileJava.dependsOn(clean)
 publish.dependsOn(publishToMavenLocal)
+processResources.exclude('**/rebel.xml')
 
 // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
 jar {

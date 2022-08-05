@@ -49,6 +49,7 @@ tasks.withType(GenerateModuleMetadata) {
 
 compileJava.dependsOn(clean)
 publish.dependsOn(publishToMavenLocal)
+processResources.exclude('**/rebel.xml')
 
 // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
 jar {
