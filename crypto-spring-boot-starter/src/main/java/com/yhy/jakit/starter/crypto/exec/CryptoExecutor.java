@@ -6,6 +6,7 @@ import com.yhy.jakit.starter.crypto.register.CryptoFactory;
 import com.yhy.jakit.starter.crypto.register.CryptoRegister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 /**
  * 执行器
@@ -32,6 +33,9 @@ public class CryptoExecutor {
      * @throws UnSupportedCryptAlgorithmException 未支持的加密算法
      */
     public String encrypt(String src) throws UnSupportedCryptAlgorithmException {
+        if (!StringUtils.hasLength(src)) {
+            return src;
+        }
         if (properties.shouldSymmetric()) {
             return symmetric().encrypt(src);
         } else if (properties.shouldAsymmetric()) {
@@ -51,6 +55,9 @@ public class CryptoExecutor {
      * @throws UnSupportedCryptAlgorithmException 未支持的解密算法
      */
     public String decrypt(String encrypted) throws UnSupportedCryptAlgorithmException {
+        if (!StringUtils.hasLength(encrypted)) {
+            return encrypted;
+        }
         if (properties.shouldSymmetric()) {
             return symmetric().decrypt(encrypted);
         } else if (properties.shouldAsymmetric()) {
