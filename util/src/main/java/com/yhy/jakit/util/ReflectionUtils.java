@@ -1,9 +1,11 @@
 package com.yhy.jakit.util;
 
+import com.yhy.jakit.util.descriptor.GetterSetter;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,7 +65,7 @@ public abstract class ReflectionUtils {
      * @param clazz    类
      * @param callback 处理回调
      */
-    public static void doFields(Class<?> clazz, FieldCallback callback) {
+    public static void doFields(Class<?> clazz, FieldCallbackField callback) throws Exception {
         doFields(clazz, callback, null);
     }
 
@@ -76,7 +78,7 @@ public abstract class ReflectionUtils {
      * @param callback 处理回调
      * @param filter   匹配条件
      */
-    public static void doFields(Class<?> clazz, FieldCallback callback, FieldFilter filter) {
+    public static void doFields(Class<?> clazz, FieldCallbackField callback, FieldFilter filter) throws Exception {
         Class<?> targetClass = clazz;
         do {
             Field[] fields = getDeclaredFields(targetClass);
@@ -94,6 +96,41 @@ public abstract class ReflectionUtils {
             }
             targetClass = clazz.getSuperclass();
         } while (null != targetClass && targetClass != Object.class);
+    }
+
+    /**
+     * 处理字段
+     * <p>
+     * 递归处理
+     *
+     * @param annotationClass 字段符合的注解
+     * @param target          要处理字段的对象
+     * @param fc              字段回调
+     */
+    public static void doFields(Class<? extends Annotation> annotationClass, StringBuffer fieldChain, Object target, FieldCallbackTarget fc) throws Exception {
+        ReflectionUtils.doFields(target.getClass(), field -> {
+            StringBuffer sb = new StringBuffer(null == fieldChain ? field.getName() : fieldChain + "." + field.getName());
+            try {
+                Object value = GetterSetter.invokeGetter(target, field);
+                if (null != value) {
+                    // 目前仅处理 字符串 类型字段
+                    if (field.getType() == String.class) {
+                        if (field.isAnnotationPresent(annotationClass)) {
+                            fc.apply(target, field, value, sb);
+                        }
+                    } else if (field.getType() == Object.class || !field.getType().isPrimitive() && !field.getType().getCanonicalName().startsWith("java.lang")) {
+                        // 复杂类型递归执行
+                        doFields(annotationClass, sb, value, fc);
+                    }
+                }
+            } catch (IllegalStateException e) {
+                if (null != e.getMessage() && e.getMessage().startsWith("Not found:")) {
+                    // ignore
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, field -> !Modifier.isStatic(field.getModifiers()));
     }
 
     /**
@@ -145,7 +182,7 @@ public abstract class ReflectionUtils {
      * 处理回调
      */
     @FunctionalInterface
-    public interface FieldCallback {
+    public interface FieldCallbackField {
 
         /**
          * 处理字段回调方法
@@ -155,6 +192,24 @@ public abstract class ReflectionUtils {
          * @throws IllegalAccessException   字段访问异常
          */
         void apply(Field field) throws IllegalArgumentException, IllegalAccessException;
+    }
+
+    /**
+     * 处理回调
+     */
+    @FunctionalInterface
+    public interface FieldCallbackTarget {
+
+        /**
+         * 处理字段
+         *
+         * @param target     该字段所属的类实例
+         * @param field      字段
+         * @param value      字段值
+         * @param fieldChain 字段名链 xx.yy.zz
+         * @throws Exception 异常
+         */
+        void apply(Object target, Field field, Object value, StringBuffer fieldChain) throws Exception;
     }
 
     /**

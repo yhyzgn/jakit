@@ -40,6 +40,10 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation project(':util')
+    testImplementation project(':simple-support')
+    testImplementation project(':crypto-spring-boot-starter')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
