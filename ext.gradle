@@ -8,7 +8,7 @@ ext {
     ] as LinkedHashMap
     util = [
             artifact   : 'util',
-            version    : '1.0.2',
+            version    : '1.0.3',
             description: 'Some util components.'
     ] as LinkedHashMap
     simpleSupport = [
@@ -68,7 +68,7 @@ ext {
     ] as LinkedHashMap
     starterCrypto = [
             artifact   : 'crypto-spring-boot-starter',
-            version    : '1.0.2',
+            version    : '1.0.3',
             description: 'Some algorithm cipher.'
     ] as LinkedHashMap
     simpleCrypto = [
