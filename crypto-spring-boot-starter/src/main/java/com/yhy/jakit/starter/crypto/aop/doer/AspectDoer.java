@@ -17,7 +17,26 @@ import java.util.List;
  */
 public interface AspectDoer {
 
+    /**
+     * 自动解密
+     *
+     * @param request   当前请求对象
+     * @param paramList 上层已封装好的参数信息列表
+     * @param handler   请求处理器（Controller）
+     * @param method    请求处理器方法（method）
+     * @param args      参数值列表
+     * @return 解密后的参数值列表
+     */
     Object[] autoDecrypt(HttpServletRequest request, List<TypedParam> paramList, Object handler, Method method, Object[] args);
 
+    /**
+     * 自动加密
+     *
+     * @param request 当前请求对象
+     * @param handler 请求处理器（Controller）
+     * @param method  请求处理器方法（method）
+     * @param result  请求处理器返回的响应结果
+     * @return 加密后的响应数据
+     */
     Object autoEncrypt(HttpServletRequest request, Object handler, Method method, Object result);
 }
