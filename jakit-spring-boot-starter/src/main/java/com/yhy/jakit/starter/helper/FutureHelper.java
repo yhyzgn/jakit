@@ -118,11 +118,7 @@ public class FutureHelper {
                 .stream()
                 .map(subList -> {
                     Runnable runnable = () -> consumer.accept(r, subList);
-                    TtlRunnable ttlRunnable = TtlRunnable.get(runnable);
-                    if (null != ttlRunnable) {
-                        runnable = ttlRunnable;
-                    }
-                    return CompletableFuture.runAsync(runnable, executor);
+                    return CompletableFuture.runAsync(TtlRunnable.get(runnable), executor);
                 })
                 .toArray(CompletableFuture[]::new)
         ).join();

@@ -235,8 +235,8 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         }
 
         @Override
-        public int read(@NotNull byte[] b) throws IOException {
-            return stream.read(b);
+        public int read(byte @NotNull [] bs) throws IOException {
+            return stream.read(bs);
         }
     }
 }
