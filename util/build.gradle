@@ -25,7 +25,7 @@ dependencies {
     api 'com.google.code.gson:gson:2.9.0'
     api 'com.google.guava:guava:31.1-jre'
     api 'org.jetbrains:annotations:23.0.0'
-    api 'cn.hutool:hutool-all:5.8.8'
+    api 'cn.hutool:hutool-all:5.8.18'
 
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'

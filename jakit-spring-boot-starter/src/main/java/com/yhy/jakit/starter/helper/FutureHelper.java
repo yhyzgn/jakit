@@ -3,11 +3,11 @@ package com.yhy.jakit.starter.helper;
 import com.alibaba.ttl.TtlRunnable;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 @Component
 public class FutureHelper {
     @Autowired
-    private Executor executor;
+    private ThreadPoolTaskExecutor executor;
 
     /**
      * stream 异步执行并返回 List
