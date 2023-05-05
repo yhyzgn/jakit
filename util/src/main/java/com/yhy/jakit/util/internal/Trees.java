@@ -2,8 +2,10 @@ package com.yhy.jakit.util.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * 树形工具
@@ -26,8 +28,23 @@ public abstract class Trees {
      * @param elementPredicate 匹配各级节点的条件，回调参数分别是 parent, element
      * @param <T>              节点类型
      * @return 树
+     * @deprecated 参考 {@link #of(List, Predicate, BiPredicate)}
      */
+    @Deprecated
     public static <T extends Node<T>> List<T> fromList(List<T> elements, Predicate<T> rootPredicate, BiPredicate<T, T> elementPredicate) {
+        return of(elements, rootPredicate, elementPredicate);
+    }
+
+    /**
+     * 从普通 List 集合转换成 Tree 结构
+     *
+     * @param elements        原始数据
+     * @param rootPredicate   父节点的条件
+     * @param parentPredicate 匹配各级节点的条件，回调参数分别是 parent, element
+     * @param <T>             节点类型
+     * @return 树
+     */
+    public static <T extends Node<T>> List<T> of(List<T> elements, Predicate<T> rootPredicate, BiPredicate<T, T> parentPredicate) {
         if (Lists.isEmpty(elements)) {
             return elements;
         }
@@ -41,7 +58,7 @@ public abstract class Trees {
         });
 
         // 再用娃去选父节点
-        result.forEach(item -> item.setChildren(buildChildren(item, elements, elementPredicate)));
+        result.forEach(item -> item.setChildren(buildChildren(item, elements, parentPredicate)));
 
         return result;
     }
@@ -52,8 +69,33 @@ public abstract class Trees {
      * @param tree 原始数据
      * @param <T>  节点类型
      * @return 结果集
+     * @deprecated 参考 {@link #flat(List)}
      */
+    @Deprecated
     public static <T extends Node<T>> List<T> toList(List<T> tree) {
+        return flat(tree);
+    }
+
+    /**
+     * 把 Tree 结构转展开成普通 List 集合类型
+     *
+     * @param tree 原始数据
+     * @param <T>  节点类型
+     * @return 结果集
+     */
+    public static <T extends Node<T>> List<T> flat(List<T> tree) {
+        return flat(tree, null);
+    }
+
+    /**
+     * 把 Tree 结构转展开成普通 List 集合类型
+     *
+     * @param tree     原始数据
+     * @param consumer 节点支持一些操作，回调参数分别是 parent, element
+     * @param <T>      节点类型
+     * @return 结果集
+     */
+    public static <T extends Node<T>> List<T> flat(List<T> tree, BiConsumer<T, T> consumer) {
         if (Lists.isEmpty(tree)) {
             return tree;
         }
@@ -63,9 +105,12 @@ public abstract class Trees {
         for (T t : tree) {
             List<T> children = t.getChildren();
             t.setChildren(null);
+            if (null != consumer && Lists.isNotEmpty(children)) {
+                children.forEach(el -> consumer.accept(t, el));
+            }
 
             result.add(t);
-            children = toList(children);
+            children = flat(children, consumer);
             if (null != children && !children.isEmpty()) {
                 result.addAll(children);
             }
@@ -98,6 +143,70 @@ public abstract class Trees {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取树的所有叶子节点
+     *
+     * @param tree 树
+     * @param <T>  元素类型
+     * @return 叶子列表
+     */
+    public static <T extends Node<T>> List<T> leaves(List<T> tree) {
+        if (Lists.isEmpty(tree)) {
+            return tree;
+        }
+
+        // 先展开，并记录父节点
+        List<T> list = new ArrayList<>();
+        flat(tree, (p, el) -> {
+            if (Lists.isEmpty(el.getChildren())) {
+                list.add(el);
+            }
+        });
+        return list;
+    }
+
+    /**
+     * 树按叶子展开成分支
+     *
+     * @param tree 树
+     * @param <T>  元素类型
+     * @return 分支列表
+     */
+    public static <T extends Parentable<T>> List<List<T>> branches(List<T> tree) {
+        return branches(tree, null);
+    }
+
+    /**
+     * 树按叶子展开成分支
+     *
+     * @param tree          树
+     * @param pickPredicate 子树条件
+     * @param <T>           元素类型
+     * @return 分支列表
+     */
+    public static <T extends Parentable<T>> List<List<T>> branches(List<T> tree, Predicate<T> pickPredicate) {
+        List<T> list = null != pickPredicate ? pick(tree, pickPredicate) : tree;
+        List<T> leafList = new ArrayList<>();
+        flat(list, (p, el) -> {
+            el.setParent(p);
+            if (Lists.isEmpty(el.getChildren())) {
+                leafList.add(el);
+            }
+        });
+
+        return leafList.stream().map(it -> {
+            List<T> branch = Lists.of(it);
+            if (null != it.getParent()) {
+                T p = it;
+                do {
+                    p = p.getParent();
+                    branch.add(p);
+                } while (null != p && null != p.getParent());
+            }
+            return branch;
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -243,5 +352,27 @@ public abstract class Trees {
          * @return 子节点
          */
         List<T> getChildren();
+    }
+
+    /**
+     * 支持父节点操作接口
+     *
+     * @param <T> 元素类型
+     */
+    public interface Parentable<T> extends Node<T> {
+
+        /**
+         * 设置父节点
+         *
+         * @param parent 父节点
+         */
+        void setParent(T parent);
+
+        /**
+         * 获取父节点
+         *
+         * @return 父节点
+         */
+        T getParent();
     }
 }
