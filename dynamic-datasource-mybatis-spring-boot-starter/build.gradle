@@ -43,13 +43,13 @@ publish.dependsOn(publishToMavenLocal)
 processResources.exclude('**/rebel.xml')
 
 task sourceJar(type: Jar) {
-    classifier "sources"
-    from sourceSets.main.allSource
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier "javadoc"
-    from javadoc
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
 }
 
 tasks.withType(JavaCompile) {
@@ -66,7 +66,7 @@ tasks.withType(GenerateModuleMetadata) {
 // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
 jar {
     enabled true
-    classifier ''
+    archiveClassifier = ''
     afterEvaluate {
         manifest {
             attributes 'Implementation-Version': archiveVersion

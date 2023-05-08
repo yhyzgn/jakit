@@ -44,7 +44,7 @@ compileJava.dependsOn(clean)
 // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
 jar {
     enabled true
-    classifier ''
+    archiveClassifier = ''
     afterEvaluate {
         manifest {
             attributes 'Implementation-Version': archiveVersion
