@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.2'
-    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'org.springframework.boot' version '2.7.11'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'java'
 }
 
@@ -34,13 +34,13 @@ jar {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'mysql:mysql-connector-java'
+    implementation 'com.mysql:mysql-connector-j'
     implementation project(':util')
     implementation project(':simple-support')
     implementation project(':jakit-spring-boot-starter')
     implementation project(':operation-logging-mybatis-spring-boot-starter')
     implementation 'org.burningwave:core:12.53.0'
-    implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.2'
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.3'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'

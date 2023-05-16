@@ -27,8 +27,7 @@ import java.util.UUID;
 @Component
 @ConditionalOnBean(LockerHelper.class)
 public class LockerAspect {
-
-    @Autowired
+    @Autowired(required = false)
     private LockerHelper helper;
 
     /**
@@ -40,6 +39,9 @@ public class LockerAspect {
      */
     @Around("@annotation(com.yhy.jakit.starter.aop.lock.Locker)")
     public Object around(ProceedingJoinPoint point) throws Throwable {
+        if (null == helper) {
+            return null == point.getArgs() || point.getArgs().length == 0 ? point.proceed() : point.proceed(point.getArgs());
+        }
         MethodSignature signature = (MethodSignature) point.getSignature();
         Method method = signature.getMethod();
         Locker locker = method.getAnnotation(Locker.class);
@@ -56,7 +58,7 @@ public class LockerAspect {
         }
         log.info("获取锁【{}】成功！", key);
         try {
-            return point.proceed();
+            return null == point.getArgs() || point.getArgs().length == 0 ? point.proceed() : point.proceed(point.getArgs());
         } finally {
             // 方法执行完后是否自动解锁
             if (locker.autoUnlock()) {

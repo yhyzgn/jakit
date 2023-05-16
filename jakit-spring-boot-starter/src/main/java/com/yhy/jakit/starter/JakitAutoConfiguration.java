@@ -1,5 +1,6 @@
 package com.yhy.jakit.starter;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.yhy.jakit.util.IPUtils;
@@ -48,6 +49,7 @@ public class JakitAutoConfiguration {
     public ObjectMapper objectMapper() {
         ObjectMapper om = new ObjectMapper();
         om.setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
+        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         om.findAndRegisterModules();
         return om;
     }

@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/common")
 public class CommonController {
-    @Autowired
-    private RedisHelper redisHelper;
+    // @Autowired
+    // private RedisHelper redisHelper;
 
     @Limiter(key = "common-index", period = 60, quota = 4)
     @GetMapping
     public Res index() {
-        log.info("{}", redisHelper);
+        // log.info("{}", redisHelper);
         return Res.success();
     }
 }

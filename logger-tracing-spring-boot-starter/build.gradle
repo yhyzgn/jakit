@@ -1,8 +1,8 @@
 import java.text.SimpleDateFormat
 
 plugins {
-    id 'org.springframework.boot' version '2.7.2'
-    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'org.springframework.boot' version '2.7.11'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id "java-library"
     id "maven-publish"
     id "signing"
@@ -25,6 +25,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     api 'org.codehaus.janino:janino'
+    api 'org.hibernate:hibernate-core'
+    api 'com.github.danielwegener:logback-kafka-appender:0.2.0-RC2'
+    api 'net.logstash.logback:logstash-logback-encoder:7.3'
     api project(':util')
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

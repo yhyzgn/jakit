@@ -142,8 +142,8 @@
                 <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
                 <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG"/>
                 <logger name="org.hibernate.SQL" level="DEBUG"/>
-                <logger name="org.hibernate.engine.QueryParameters" level="DEBUG"/>
-                <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG"/>
+                <logger name="org.hibernate.engine.spi.QueryParameters" level="DEBUG"/>
+                <logger name="org.hibernate.engine.query.spi.HQLQueryPlan" level="DEBUG"/>
             </then>
         </if>
         ·
@@ -179,8 +179,8 @@
                 <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
                 <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG"/>
                 <logger name="org.hibernate.SQL" level="DEBUG"/>
-                <logger name="org.hibernate.engine.QueryParameters" level="DEBUG"/>
-                <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG"/>
+                <logger name="org.hibernate.engine.spi.QueryParameters" level="DEBUG"/>
+                <logger name="org.hibernate.engine.query.spi.HQLQueryPlan" level="DEBUG"/>
             </then>
         </if>
     </springProfile>
@@ -215,8 +215,8 @@
                 <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
                 <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG"/>
                 <logger name="org.hibernate.SQL" level="DEBUG"/>
-                <logger name="org.hibernate.engine.QueryParameters" level="DEBUG"/>
-                <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG"/>
+                <logger name="org.hibernate.engine.spi.QueryParameters" level="DEBUG"/>
+                <logger name="org.hibernate.engine.query.spi.HQLQueryPlan" level="DEBUG"/>
             </then>
         </if>
     </springProfile>

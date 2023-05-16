@@ -1,8 +1,8 @@
 import java.text.SimpleDateFormat
 
 plugins {
-    id 'org.springframework.boot' version '2.7.2'
-    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'org.springframework.boot' version '2.7.11'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id "java-library"
     id "maven-publish"
     id "signing"
@@ -29,6 +29,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     compileOnly project(':dynamic-datasource-redis-spring-boot-starter')
 
+    api 'redis.clients:jedis'
     api 'jakarta.validation:jakarta.validation-api'
     api 'org.springframework.boot:spring-boot-starter-aop'
     api 'org.springframework.boot:spring-boot-starter-validation'

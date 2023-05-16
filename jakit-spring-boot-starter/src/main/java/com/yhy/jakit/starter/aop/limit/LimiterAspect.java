@@ -27,8 +27,8 @@ import java.time.Duration;
 @Component
 @ConditionalOnBean(LimiterHelper.class)
 public class LimiterAspect {
-    @Autowired
-    private LimiterHelper limiterHelper;
+    @Autowired(required = false)
+    private LimiterHelper helper;
 
     /**
      * 环绕增强
@@ -39,26 +39,28 @@ public class LimiterAspect {
      */
     @Around("@annotation(com.yhy.jakit.starter.aop.limit.Limiter)")
     public Object around(ProceedingJoinPoint point) throws Throwable {
-        MethodSignature signature = (MethodSignature) point.getSignature();
-        Method method = signature.getMethod();
-        Limiter limiter = method.getAnnotation(Limiter.class);
+        if (null != helper) {
+            MethodSignature signature = (MethodSignature) point.getSignature();
+            Method method = signature.getMethod();
+            Limiter limiter = method.getAnnotation(Limiter.class);
 
-        // 从方法参数中填充 key 占位符
-        // 支持占位符从参数自动填充
-        String key = PlaceholderUtils.resolve(limiter.key(), signature.getParameterNames(), point.getArgs());
+            // 从方法参数中填充 key 占位符
+            // 支持占位符从参数自动填充
+            String key = PlaceholderUtils.resolve(limiter.key(), signature.getParameterNames(), point.getArgs());
 
-        long capacity = limiter.capacity();
-        if (capacity <= 0L) {
-            // 默认值
-            capacity = limiter.quota();
+            long capacity = limiter.capacity();
+            if (capacity <= 0L) {
+                // 默认值
+                capacity = limiter.quota();
+            }
+
+            log.info("分布式限流器【{}】申请令牌中...", key);
+            if (!helper.acquire(key, limiter.quota(), Duration.of(limiter.period(), limiter.periodUnit()), limiter.quantity(), capacity)) {
+                log.error("分布式限流器【{}】申请令牌失败", key);
+                throw new RateLimiterException(limiter.message());
+            }
+            log.info("分布式限流器【{}】申请令牌成功", key);
         }
-
-        log.info("分布式限流器【{}】申请令牌中...", key);
-        if (!limiterHelper.acquire(key, limiter.quota(), Duration.of(limiter.period(), limiter.periodUnit()), limiter.quantity(), capacity)) {
-            log.error("分布式限流器【{}】申请令牌失败", key);
-            throw new RateLimiterException(limiter.message());
-        }
-        log.info("分布式限流器【{}】申请令牌成功", key);
-        return point.proceed();
+        return null == point.getArgs() || point.getArgs().length == 0 ? point.proceed() : point.proceed(point.getArgs());
     }
 }
