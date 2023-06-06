@@ -51,7 +51,7 @@ public abstract class Lists {
     @SafeVarargs
     public static <T> List<T> intersection(List<T> list1, List<T> list2, List<T>... lists) {
         List<T> result = intersection(list1, list2, list2::contains);
-        if (null != lists && lists.length > 0) {
+        if (null != lists) {
             for (List<T> list : lists) {
                 result = intersection(result, list, list::contains);
             }
@@ -72,7 +72,7 @@ public abstract class Lists {
     @SafeVarargs
     public static <T> List<T> intersection(BiPredicate<T, T> predicate, List<T> list1, List<T> list2, List<T>... lists) {
         List<T> result = intersection(list1, list2, item1 -> list2.stream().anyMatch(item2 -> predicate.test(item1, item2)));
-        if (null != lists && lists.length > 0) {
+        if (null != lists) {
             for (List<T> list : lists) {
                 result = intersection(result, list, item1 -> list.stream().anyMatch(item2 -> predicate.test(item1, item2)));
             }

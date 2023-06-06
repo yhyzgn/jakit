@@ -2,6 +2,7 @@ package com.yhy.jakit.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -17,5 +18,11 @@ public class ClassUtilsTest {
     public void testClass() {
         List<Class<?>> classList = ClassUtils.implemented("com.yhy", TestInterface.class);
         System.out.println(classList);
+    }
+
+    @Test
+    public void testLocalDateBetween() {
+        LocalDate now = LocalDate.now();
+        LocalDateTimeUtils.daysBetween(now.minusDays(1), now).forEach(System.out::println);
     }
 }

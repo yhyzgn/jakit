@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +63,28 @@ public interface LocalDateTimeUtils {
     }
 
     /**
+     * 格式化
+     *
+     * @param time      时间
+     * @param formatter 格式
+     * @return 结果
+     */
+    static String format(LocalDateTime time, DateTimeFormatter formatter) {
+        return formatter.format(time);
+    }
+
+    /**
+     * 格式化
+     *
+     * @param time    时间
+     * @param pattern 格式
+     * @return 结果
+     */
+    static String format(LocalDateTime time, String pattern) {
+        return DateTimeFormatter.ofPattern(pattern).format(time);
+    }
+
+    /**
      * 返回两个日期中的每一天
      *
      * @param begin 开始日期
@@ -76,11 +99,9 @@ public interface LocalDateTimeUtils {
             end = LocalDate.now();
         }
         List<LocalDate> list = new ArrayList<>();
-        if (end.isAfter(begin)) {
-            while (begin.isBefore(end)) {
-                list.add(begin);
-                begin = begin.plusDays(1);
-            }
+        while (!end.isBefore(begin)) {
+            list.add(begin);
+            begin = begin.plusDays(1);
         }
         return list;
     }
