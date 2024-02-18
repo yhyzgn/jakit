@@ -18,8 +18,18 @@ ext {
     ] as LinkedHashMap
     starterJakit = [
             artifact   : 'jakit-spring-boot-starter',
-            version    : '1.0.6',
+            version    : '1.1.0',
             description: 'SpringBoot starter.'
+    ] as LinkedHashMap
+    starterJakitJpa = [
+            artifact   : 'jpa-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'SpringBoot JPA starter.'
+    ] as LinkedHashMap
+    starterAop = [
+            artifact   : 'aop-spring-boot-starter',
+            version    : '1.0.0',
+            description: 'SpringBoot AOP starter.'
     ] as LinkedHashMap
     simpleJakit = [
             artifact   : 'jakit-spring-boot-starter-simple',

@@ -25,13 +25,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-redis'
-    compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
     compileOnly 'org.projectlombok:lombok'
     compileOnly project(':dynamic-datasource-redis-spring-boot-starter')
 
     api 'redis.clients:jedis'
     api 'jakarta.validation:jakarta.validation-api'
-    api 'org.springframework.boot:spring-boot-starter-aop'
     api 'org.springframework.boot:spring-boot-starter-validation'
     api project(':util')
 
@@ -44,14 +42,14 @@ test {
     useJUnitPlatform()
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.warnings = false
     options.deprecation = true
     options.compilerArgs += ["-parameters"]
 }
 
-tasks.withType(GenerateModuleMetadata) {
+tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
 }
 
@@ -101,12 +99,13 @@ javadoc {
     }
 }
 
-task sourceJar(type: Jar) {
+tasks.register('sourceJar', Jar) {
     archiveClassifier = 'sources'
     from sourceSets.main.allJava
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
     archiveClassifier = 'javadoc'
     from javadoc.destinationDir
 }

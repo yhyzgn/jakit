@@ -2,6 +2,8 @@ rootProject.name = 'jakit'
 
 include 'util'
 include 'simple-support'
+include 'aop-spring-boot-starter'
+include 'jpa-spring-boot-starter'
 include 'jakit-spring-boot-starter'
 include 'jakit-spring-boot-starter-simple'
 include 'dynamic-datasource-redis-spring-boot-starter'

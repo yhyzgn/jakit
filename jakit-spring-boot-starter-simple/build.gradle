@@ -40,6 +40,8 @@ dependencies {
     implementation project(':util')
     implementation project(':simple-support')
     implementation project(':jakit-spring-boot-starter')
+    implementation project(':aop-spring-boot-starter')
+    implementation project(':jpa-spring-boot-starter')
     implementation project(':dynamic-datasource-redis-spring-boot-starter')
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'

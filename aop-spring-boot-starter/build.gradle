@@ -1,9 +1,11 @@
 import java.text.SimpleDateFormat
 
 plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'signing'
+    id 'org.springframework.boot' version '2.7.11'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "java-library"
+    id "maven-publish"
+    id "signing"
 }
 
 apply from: "../ext.gradle"
@@ -11,25 +13,28 @@ apply from: "../ext.gradle"
 def rootConfig = rootProject.ext
 
 group rootConfig.group
-version rootConfig.util.version
+version rootConfig.starterAop.version
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
 
 dependencies {
-    implementation 'javax.servlet:javax.servlet-api:4.0.1'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.4'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.0-rc1'
-    implementation 'ch.qos.logback:logback-classic:1.4.14'
-    implementation 'org.jetbrains:annotations:23.0.0'
-    implementation 'org.projectlombok:lombok:1.18.24'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    compileOnly 'org.springframework.boot:spring-boot-starter-data-redis'
+    compileOnly 'org.projectlombok:lombok'
+    compileOnly project(':dynamic-datasource-redis-spring-boot-starter')
+    compileOnly project(':jakit-spring-boot-starter')
 
-    api 'com.alibaba:transmittable-thread-local:2.14.0'
-    api 'com.google.code.gson:gson:2.9.0'
-    api 'com.google.guava:guava:33.0.0-jre'
-    api 'org.jetbrains:annotations:23.0.0'
-    api 'cn.hutool:hutool-all:5.8.26'
+    api project(':util')
 
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {
@@ -128,13 +133,13 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = rootConfig.group
-            artifactId = rootConfig.util.artifact
-            version = rootConfig.util.version
+            artifactId = rootConfig.starterAop.artifact
+            version = rootConfig.starterAop.version
             from components.java
 
             pom {
-                name = rootConfig.util.artifact
-                description = rootConfig.util.description
+                name = rootConfig.starterAop.artifact
+                description = rootConfig.starterAop.description
                 url = "https://${rootConfig.url}"
                 licenses {
                     license {
@@ -162,7 +167,8 @@ publishing {
 
     repositories {
         maven {
-            name 'oss'
+            name "oss"
+            allowInsecureProtocol true
             def releasesRepoUrl = rootConfig.repository.release
             def snapshotsRepoUrl = rootConfig.repository.snapshot
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
