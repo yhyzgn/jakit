@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ReadListener;
@@ -154,7 +155,26 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String[] getParameterValues(String name) {
-        return super.getParameterValues(name);
+        // 过滤 xss 攻击
+        String[] results = super.getParameterValues(name);
+        if (results != null && results.length > 0) {
+            int length = results.length;
+            for (int i = 0; i < length; i++) {
+                // 过滤参数值
+                results[i] = HtmlUtils.htmlEscape(results[i]);
+            }
+            return results;
+        }
+        return results;
+    }
+
+    @Override
+    public String getHeader(String name) {
+        return Optional.ofNullable(super.getHeader(name))
+                .map(value -> value
+                        .replaceAll("\r", "")
+                        .replaceAll("\n", "")
+                ).orElse(null);
     }
 
     private boolean isApplicationJson() {
